@@ -1,5 +1,7 @@
 # Kimodo Turbo
 
+**[Download the complete model on Hugging Face](https://huggingface.co/Javascript/Llama-3-Kimodo-Turbo)** · 16.3 GB · Ready for inference
+
 https://github.com/user-attachments/assets/de3eb96a-0d6b-4ab9-9ed0-d9b21fcd15cf
 
 Real-time demo at **1× speed, without cuts**: a 5-second motion generated in **6.9 s**,
