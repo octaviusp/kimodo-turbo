@@ -17,6 +17,15 @@
     </header>
     <p class="hint">Describe a motion. Generate it. Watch it play.</p>
     <section>
+      <h2>Character</h2>
+      <div class="character-actions">
+        <button id="choose-character">Choose character (.glb)</button>
+        <button id="default-character">Default</button>
+      </div>
+      <input id="character-file" type="file" accept=".glb,model/gltf-binary" hidden aria-label="Choose character file">
+      <p id="character-status" class="muted" role="status" aria-live="polite">Loading character…</p>
+    </section>
+    <section>
       <h2>Motion</h2>
       <div class="chips" id="presets" aria-label="Example motions"></div>
       <label for="prompt">Description</label>

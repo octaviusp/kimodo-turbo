@@ -1,0 +1,18 @@
+[package]
+name = "kimodo-autorig"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+license = "Apache-2.0"
+description = "Deterministic surface-aware humanoid GLB rigging"
+
+[dependencies]
+glam = { version = "=0.34.1", default-features = false, features = ["std"] }
+gltf = { version = "=1.4.1", default-features = false, features = ["utils", "names"] }
+image = { version = "=0.25.10", default-features = false, features = ["png", "jpeg"] }
+serde_json = "=1.0.151"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true

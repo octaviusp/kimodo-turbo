@@ -1,0 +1,742 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-12",
+  "hardware": "Apple M5 Pro / 48 GB RAM / macOS 26",
+  "binary": {
+    "sha256": "9e83e79b0ec614ad656a526018a5e2396223d3e4b8068d18d2f1b00255358b48",
+    "size_bytes": 1511408
+  },
+  "measurement": "Automatic axes; five round-robin warm fresh-process runs per character after one discarded launch. Owned inference, compilation and browser QA idle. Process times include spawn, read, fitting, weights and GLB export.",
+  "checks": {
+    "correctness": {
+      "passed": 10,
+      "total": 10
+    },
+    "automated_deformation_flags": 0,
+    "native_tests": 13,
+    "analytic_and_geometry_tests": 11,
+    "transformation_cases": 12,
+    "automatic_orientation_cases": 10,
+    "rebind_legacy_cases": 1,
+    "browser_samples": 1068,
+    "browser_max_error_height": 1.1506942447164604e-07,
+    "rest_normal_max_error": 3.41e-08
+  },
+  "previous_default_rig": {
+    "sha256": "5d88a78d790492dbf0949ad4ae12f3c1f92d3489ddd5c5f2025622367841c96e",
+    "poses": {
+      "rest": {
+        "edge_stretch_p99": 1.0000008751103873,
+        "surface_fraction_above_2x": 0.0,
+        "collapsed_surface_fraction_below_10pct": 0.0,
+        "movement_p95_height": 1.4258366933246985e-08
+      },
+      "arms_raised": {
+        "edge_stretch_p99": 6.029011681310073,
+        "surface_fraction_above_2x": 0.024862843543641183,
+        "collapsed_surface_fraction_below_10pct": 0.001192855489550846,
+        "movement_p95_height": 0.6893129708651137
+      },
+      "wide_stance": {
+        "edge_stretch_p99": 4.40721042236799,
+        "surface_fraction_above_2x": 0.02512433029987185,
+        "collapsed_surface_fraction_below_10pct": 0.0,
+        "movement_p95_height": 0.2982969296952119
+      },
+      "crouch": {
+        "edge_stretch_p99": 1.490561923798129,
+        "surface_fraction_above_2x": 0.0014858036812420699,
+        "collapsed_surface_fraction_below_10pct": 0.0009311279701962818,
+        "movement_p95_height": 0.2224082867163049
+      },
+      "torso_twist": {
+        "edge_stretch_p99": 1.5665957409521092,
+        "surface_fraction_above_2x": 0.0062520701564644735,
+        "collapsed_surface_fraction_below_10pct": 0.0,
+        "movement_p95_height": 0.22369330621689745
+      },
+      "asymmetric": {
+        "edge_stretch_p99": 5.206436435282596,
+        "surface_fraction_above_2x": 0.03822783935832128,
+        "collapsed_surface_fraction_below_10pct": 0.0004364991654842429,
+        "movement_p95_height": 0.5772952399761511
+      }
+    }
+  },
+  "cases": [
+    {
+      "id": "tunic",
+      "source_sha256": "394006017514c67c4dbf6f02fd2d4e3ffc5fc6771e5ad22d303582dac57ba8a0",
+      "source_vertices": 6260,
+      "output_vertices": 6283,
+      "triangles": 4961,
+      "bones": 27,
+      "source_unchanged": true,
+      "deterministic_output": true,
+      "correctness_pass": true,
+      "automated_deformation_flags": [],
+      "rest_recovery_max_height": 4.939392218588064e-08,
+      "weight_sum_max_error": 1.2665987014770508e-07,
+      "process_median_ms": 64.53112499730196,
+      "process_mad_ms": 0.7768750074319541,
+      "native_median_ms": 58.881583,
+      "peak_rss_bytes": 50282496,
+      "peak_process_footprint_bytes": 48808320,
+      "automatic_output_sha256": "f50187937a3610402437958b8c6c3c056b5b505f02773ee9deb9f99a84bde8e6",
+      "quality_output_sha256": "dc9c0bf519d4c0f5ed6a4dab3387bf926ef15c8dd149597a56e09ad40762bd4d",
+      "poses": {
+        "rest": {
+          "edge_stretch_p99": 1.0000014472519845,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 2.515550087165776e-08
+        },
+        "arms_raised": {
+          "edge_stretch_p99": 1.701174701724539,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0014437921986476777,
+          "movement_p95_height": 0.6765588519606509
+        },
+        "wide_stance": {
+          "edge_stretch_p99": 1.00783966579891,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.2951107625026106
+        },
+        "crouch": {
+          "edge_stretch_p99": 1.1205489663913446,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.1983922551645643
+        },
+        "torso_twist": {
+          "edge_stretch_p99": 1.1467188171892557,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.22390277013303814
+        },
+        "asymmetric": {
+          "edge_stretch_p99": 1.5625427468167157,
+          "surface_fraction_above_2x": 0.0008825607148433112,
+          "collapsed_surface_fraction_below_10pct": 0.0016244795942217344,
+          "movement_p95_height": 0.5790081288115211
+        }
+      },
+      "browser_oracle": {
+        "browser_errors": [],
+        "cpu_browser_samples": 108,
+        "cpu_browser_max_error_height": 4.094108832356642e-08
+      },
+      "canonical_nonterminal_bones": 22
+    },
+    {
+      "id": "musk",
+      "source_sha256": "04e655bc6399a620f1fdf95fc44b58d247edf93f99a1c6454c8239885309a230",
+      "source_vertices": 23617,
+      "output_vertices": 23617,
+      "triangles": 19954,
+      "bones": 27,
+      "source_unchanged": true,
+      "deterministic_output": true,
+      "correctness_pass": true,
+      "automated_deformation_flags": [],
+      "rest_recovery_max_height": 1.0202126823441905e-07,
+      "weight_sum_max_error": 1.2293457984924316e-07,
+      "process_median_ms": 93.64745899802074,
+      "process_mad_ms": 2.288333998876624,
+      "native_median_ms": 88.20054099999999,
+      "peak_rss_bytes": 39354368,
+      "peak_process_footprint_bytes": 38044032,
+      "automatic_output_sha256": "fc8c8dddb40632a6b7111a0769d6f3071499dfcbb0e77b38d6d4d87e6ebee8d7",
+      "quality_output_sha256": "22d180e649475f94e24b9ec9230be1a4e3343e2a37c0cd2cda0433afd70ceb44",
+      "poses": {
+        "rest": {
+          "edge_stretch_p99": 1.000005283291801,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 4.5421246310479185e-08
+        },
+        "arms_raised": {
+          "edge_stretch_p99": 1.75154066908545,
+          "surface_fraction_above_2x": 0.0061505489003045,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.6291518596908643
+        },
+        "wide_stance": {
+          "edge_stretch_p99": 1.1481272432405591,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.270054878551729
+        },
+        "crouch": {
+          "edge_stretch_p99": 1.3374218121122632,
+          "surface_fraction_above_2x": 0.0003027075090925049,
+          "collapsed_surface_fraction_below_10pct": 0.0005684918812832021,
+          "movement_p95_height": 0.21096414886183673
+        },
+        "torso_twist": {
+          "edge_stretch_p99": 1.335325460542328,
+          "surface_fraction_above_2x": 0.0007650864817892602,
+          "collapsed_surface_fraction_below_10pct": 0.0004010243808352714,
+          "movement_p95_height": 0.4094681184395034
+        },
+        "asymmetric": {
+          "edge_stretch_p99": 1.6198272910564826,
+          "surface_fraction_above_2x": 0.005007748880650388,
+          "collapsed_surface_fraction_below_10pct": 0.00026696482440607174,
+          "movement_p95_height": 0.5630335862656575
+        }
+      },
+      "browser_oracle": {
+        "browser_errors": [],
+        "cpu_browser_samples": 108,
+        "cpu_browser_max_error_height": 1.0525206030509797e-07
+      },
+      "canonical_nonterminal_bones": 22
+    },
+    {
+      "id": "trump",
+      "source_sha256": "83b4f43b3339811c952e97abce42a76b4bbba89502313c4f649f57cda5fb6bd9",
+      "source_vertices": 21268,
+      "output_vertices": 21268,
+      "triangles": 19396,
+      "bones": 27,
+      "source_unchanged": true,
+      "deterministic_output": true,
+      "correctness_pass": true,
+      "automated_deformation_flags": [],
+      "rest_recovery_max_height": 1.1478327645593367e-07,
+      "weight_sum_max_error": 1.341104507446289e-07,
+      "process_median_ms": 90.2957499929471,
+      "process_mad_ms": 1.3244580040918663,
+      "native_median_ms": 85.164458,
+      "peak_rss_bytes": 33243136,
+      "peak_process_footprint_bytes": 31932800,
+      "automatic_output_sha256": "02985a3bc85da441872246249c2695258fb16187b5bdc5984ec79ae862f1f4ce",
+      "quality_output_sha256": "3f2b9ff935deacd26a7cbfba35641764463b7ebb7f2e69b5b0751cc52856269a",
+      "poses": {
+        "rest": {
+          "edge_stretch_p99": 1.0000056418543386,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 4.814389431861748e-08
+        },
+        "arms_raised": {
+          "edge_stretch_p99": 1.7610190761129034,
+          "surface_fraction_above_2x": 0.006363499668873726,
+          "collapsed_surface_fraction_below_10pct": 0.0007851225148250789,
+          "movement_p95_height": 0.6407649326798963
+        },
+        "wide_stance": {
+          "edge_stretch_p99": 1.1320307613455227,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.27651259431545494
+        },
+        "crouch": {
+          "edge_stretch_p99": 1.3089200551994802,
+          "surface_fraction_above_2x": 0.00010925085971966602,
+          "collapsed_surface_fraction_below_10pct": 0.0001382375970678218,
+          "movement_p95_height": 0.20430311365950718
+        },
+        "torso_twist": {
+          "edge_stretch_p99": 1.2854649482086786,
+          "surface_fraction_above_2x": 0.0009586382383292355,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.4220331001130209
+        },
+        "asymmetric": {
+          "edge_stretch_p99": 1.5852541946195975,
+          "surface_fraction_above_2x": 0.004644981907174245,
+          "collapsed_surface_fraction_below_10pct": 0.00047468545869323235,
+          "movement_p95_height": 0.5742546033234954
+        }
+      },
+      "browser_oracle": {
+        "browser_errors": [],
+        "cpu_browser_samples": 108,
+        "cpu_browser_max_error_height": 1.1506942447164604e-07
+      },
+      "canonical_nonterminal_bones": 22
+    },
+    {
+      "id": "classic",
+      "source_sha256": "21c94471ddb4620917941ed85fafe95c64b57778216b9a4fa96f9599fdcb6623",
+      "source_vertices": 20431,
+      "output_vertices": 20431,
+      "triangles": 19314,
+      "bones": 27,
+      "source_unchanged": true,
+      "deterministic_output": true,
+      "correctness_pass": true,
+      "automated_deformation_flags": [],
+      "rest_recovery_max_height": 9.535593300634574e-08,
+      "weight_sum_max_error": 1.1175870895385742e-07,
+      "process_median_ms": 90.36766699864529,
+      "process_mad_ms": 1.1049579916289076,
+      "native_median_ms": 84.998541,
+      "peak_rss_bytes": 38469632,
+      "peak_process_footprint_bytes": 37159296,
+      "automatic_output_sha256": "e7143889d196c90cb11908ceb9c4586cb126f40775cd8d98189b8b61b65c3854",
+      "quality_output_sha256": "bc7677475a1987dd53f5b91d02aae8a6dfb119c7eb2910b27b44d110087857f5",
+      "poses": {
+        "rest": {
+          "edge_stretch_p99": 1.0000058332916604,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 4.5968634619820676e-08
+        },
+        "arms_raised": {
+          "edge_stretch_p99": 2.2699972165064626,
+          "surface_fraction_above_2x": 0.014555739254371142,
+          "collapsed_surface_fraction_below_10pct": 0.001331229855157353,
+          "movement_p95_height": 0.7180266768358992
+        },
+        "wide_stance": {
+          "edge_stretch_p99": 1.1539085983372115,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.2675116794350846
+        },
+        "crouch": {
+          "edge_stretch_p99": 1.382053009421234,
+          "surface_fraction_above_2x": 0.00014944436482490237,
+          "collapsed_surface_fraction_below_10pct": 0.0016222013295520794,
+          "movement_p95_height": 0.21875056590192285
+        },
+        "torso_twist": {
+          "edge_stretch_p99": 1.2683880212730354,
+          "surface_fraction_above_2x": 0.00017523353928776712,
+          "collapsed_surface_fraction_below_10pct": 1.4106303548119092e-05,
+          "movement_p95_height": 0.29464415747225325
+        },
+        "asymmetric": {
+          "edge_stretch_p99": 1.9146454113122733,
+          "surface_fraction_above_2x": 0.008404381430109029,
+          "collapsed_surface_fraction_below_10pct": 0.0007611819249264336,
+          "movement_p95_height": 0.5926023893112875
+        }
+      },
+      "browser_oracle": {
+        "browser_errors": [],
+        "cpu_browser_samples": 108,
+        "cpu_browser_max_error_height": 1.0816051022098917e-07
+      },
+      "canonical_nonterminal_bones": 22
+    },
+    {
+      "id": "nemesis",
+      "source_sha256": "74a0f6409e0b0b320cb46c4da83e4c1907cb096f96a0ffffdadddef90b17c70a",
+      "source_vertices": 21361,
+      "output_vertices": 21361,
+      "triangles": 19996,
+      "bones": 27,
+      "source_unchanged": true,
+      "deterministic_output": true,
+      "correctness_pass": true,
+      "automated_deformation_flags": [],
+      "rest_recovery_max_height": 1.0511691413852519e-07,
+      "weight_sum_max_error": 1.2014061212539673e-07,
+      "process_median_ms": 93.07091699156445,
+      "process_mad_ms": 0.48299900663550943,
+      "native_median_ms": 87.595709,
+      "peak_rss_bytes": 39878656,
+      "peak_process_footprint_bytes": 38568320,
+      "automatic_output_sha256": "e494a9f98ed99b3bb84f716305a1ff2b60fcb9930c2517fbef3a55ecd04f33d8",
+      "quality_output_sha256": "27be5c77f4e349e3bb2d15cd296696454016e8c00e8684e33315609eaef32fed",
+      "poses": {
+        "rest": {
+          "edge_stretch_p99": 1.0000059918972868,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 4.848157948612483e-08
+        },
+        "arms_raised": {
+          "edge_stretch_p99": 2.0987364897967224,
+          "surface_fraction_above_2x": 0.012172764520494393,
+          "collapsed_surface_fraction_below_10pct": 0.00023175673495424867,
+          "movement_p95_height": 0.6540200007846366
+        },
+        "wide_stance": {
+          "edge_stretch_p99": 1.1554524912783877,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.2552599824303572
+        },
+        "crouch": {
+          "edge_stretch_p99": 1.3219751287933343,
+          "surface_fraction_above_2x": 0.00024270376903684995,
+          "collapsed_surface_fraction_below_10pct": 0.0010851305629071735,
+          "movement_p95_height": 0.21234859628931546
+        },
+        "torso_twist": {
+          "edge_stretch_p99": 1.2634313305118408,
+          "surface_fraction_above_2x": 0.00035659700190765036,
+          "collapsed_surface_fraction_below_10pct": 9.738028185425395e-05,
+          "movement_p95_height": 0.4051841484635273
+        },
+        "asymmetric": {
+          "edge_stretch_p99": 1.8574975305386126,
+          "surface_fraction_above_2x": 0.00797316887051425,
+          "collapsed_surface_fraction_below_10pct": 0.0002619671058815417,
+          "movement_p95_height": 0.6112596098472131
+        }
+      },
+      "browser_oracle": {
+        "browser_errors": [],
+        "cpu_browser_samples": 108,
+        "cpu_browser_max_error_height": 3.0976010049063466e-08
+      },
+      "canonical_nonterminal_bones": 22
+    },
+    {
+      "id": "runner",
+      "source_sha256": "faea6ed982c460a6817bc6b539515acc1eb9e59ad9d1aa22cf8ea3d9255dc9a9",
+      "source_vertices": 22939,
+      "output_vertices": 22939,
+      "triangles": 19102,
+      "bones": 27,
+      "source_unchanged": true,
+      "deterministic_output": true,
+      "correctness_pass": true,
+      "automated_deformation_flags": [],
+      "rest_recovery_max_height": 1.0153811917616696e-07,
+      "weight_sum_max_error": 1.2293457984924316e-07,
+      "process_median_ms": 88.3994169998914,
+      "process_mad_ms": 1.883459000964649,
+      "native_median_ms": 82.816875,
+      "peak_rss_bytes": 41566208,
+      "peak_process_footprint_bytes": 40272280,
+      "automatic_output_sha256": "8e84df2dc066525dff85ddde2d604e88d6247c863d87053666d8f50913443929",
+      "quality_output_sha256": "dfc45188e5db93651ffb5e6446ab281322f443733d10f16e01e54ab940ebb20d",
+      "poses": {
+        "rest": {
+          "edge_stretch_p99": 1.0000061294262088,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 4.566542235149809e-08
+        },
+        "arms_raised": {
+          "edge_stretch_p99": 1.9033260551580646,
+          "surface_fraction_above_2x": 0.008550241754995155,
+          "collapsed_surface_fraction_below_10pct": 0.001577973292011558,
+          "movement_p95_height": 0.6479189985308161
+        },
+        "wide_stance": {
+          "edge_stretch_p99": 1.19835109217297,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.27545758738966725
+        },
+        "crouch": {
+          "edge_stretch_p99": 1.3778446018686363,
+          "surface_fraction_above_2x": 9.997077464972954e-05,
+          "collapsed_surface_fraction_below_10pct": 0.0007567277624109316,
+          "movement_p95_height": 0.20828797543686614
+        },
+        "torso_twist": {
+          "edge_stretch_p99": 1.2783612351760802,
+          "surface_fraction_above_2x": 0.0004969980384919594,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.3808198434725671
+        },
+        "asymmetric": {
+          "edge_stretch_p99": 1.5703516449211448,
+          "surface_fraction_above_2x": 0.003965012728163861,
+          "collapsed_surface_fraction_below_10pct": 0.0005862424826675586,
+          "movement_p95_height": 0.54204399169796
+        }
+      },
+      "browser_oracle": {
+        "browser_errors": [],
+        "cpu_browser_samples": 108,
+        "cpu_browser_max_error_height": 1.0662961778323291e-07
+      },
+      "canonical_nonterminal_bones": 22
+    },
+    {
+      "id": "tank",
+      "source_sha256": "9c92793dc741415a26dd3c71a39e828f9bfa66c9a383def3f087235cca777aaf",
+      "source_vertices": 23822,
+      "output_vertices": 23822,
+      "triangles": 19380,
+      "bones": 27,
+      "source_unchanged": true,
+      "deterministic_output": true,
+      "correctness_pass": true,
+      "automated_deformation_flags": [],
+      "rest_recovery_max_height": 9.857296232227534e-08,
+      "weight_sum_max_error": 1.30385160446167e-07,
+      "process_median_ms": 94.09283399872947,
+      "process_mad_ms": 0.7350829982897267,
+      "native_median_ms": 87.41875,
+      "peak_rss_bytes": 41697280,
+      "peak_process_footprint_bytes": 40403352,
+      "automatic_output_sha256": "47b8bb6d15873384d6bd09b3b69f8d1608e05b32a0df860fee43981d825223e0",
+      "quality_output_sha256": "70e0cea29fd830ae1c5d97ca41a8cfb79b571d9ef70b2c5b76da6838462bda0e",
+      "poses": {
+        "rest": {
+          "edge_stretch_p99": 1.0000052993842097,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 4.839900112250435e-08
+        },
+        "arms_raised": {
+          "edge_stretch_p99": 1.8856589775403185,
+          "surface_fraction_above_2x": 0.0065966146063266805,
+          "collapsed_surface_fraction_below_10pct": 0.00011750302081674724,
+          "movement_p95_height": 0.6855431658519706
+        },
+        "wide_stance": {
+          "edge_stretch_p99": 1.1646389813904294,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.25546872423861416
+        },
+        "crouch": {
+          "edge_stretch_p99": 1.3102435907489653,
+          "surface_fraction_above_2x": 2.0038393787081685e-05,
+          "collapsed_surface_fraction_below_10pct": 0.0008712163053171333,
+          "movement_p95_height": 0.19958276124100507
+        },
+        "torso_twist": {
+          "edge_stretch_p99": 1.2468951713953031,
+          "surface_fraction_above_2x": 0.00010858385369892073,
+          "collapsed_surface_fraction_below_10pct": 3.1297845455240114e-05,
+          "movement_p95_height": 0.42871291553623087
+        },
+        "asymmetric": {
+          "edge_stretch_p99": 1.6486298564247026,
+          "surface_fraction_above_2x": 0.0036649681025602487,
+          "collapsed_surface_fraction_below_10pct": 3.507910261828185e-05,
+          "movement_p95_height": 0.6324100629504279
+        }
+      },
+      "browser_oracle": {
+        "browser_errors": [],
+        "cpu_browser_samples": 108,
+        "cpu_browser_max_error_height": 8.382229329738675e-08
+      },
+      "canonical_nonterminal_bones": 22
+    },
+    {
+      "id": "milei",
+      "source_sha256": "728d156c6b8c73d9db84f8d0e2d3514bbbb5acf84771463b1fd8aac9e4c4d56e",
+      "source_vertices": 23645,
+      "output_vertices": 23645,
+      "triangles": 19942,
+      "bones": 27,
+      "source_unchanged": true,
+      "deterministic_output": true,
+      "correctness_pass": true,
+      "automated_deformation_flags": [],
+      "rest_recovery_max_height": 9.784414482053616e-08,
+      "weight_sum_max_error": 1.2991949915885925e-07,
+      "process_median_ms": 94.03662499971688,
+      "process_mad_ms": 1.2009999918518588,
+      "native_median_ms": 88.809084,
+      "peak_rss_bytes": 35766272,
+      "peak_process_footprint_bytes": 34455936,
+      "automatic_output_sha256": "7030c3b16e74a51572a8d9210d0cc31e4ad47ae38e88f6e574956f8ceb7b684f",
+      "quality_output_sha256": "225344a0ef89f1ccfa4b3b77318bd61a780031835b918e6797a54a78b62449c3",
+      "poses": {
+        "rest": {
+          "edge_stretch_p99": 1.000005390226951,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 4.6590775127571865e-08
+        },
+        "arms_raised": {
+          "edge_stretch_p99": 1.834358311502366,
+          "surface_fraction_above_2x": 0.007537645193871139,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.6259842424101838
+        },
+        "wide_stance": {
+          "edge_stretch_p99": 1.1530672255139098,
+          "surface_fraction_above_2x": 5.7438091202408335e-06,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.2690208129971926
+        },
+        "crouch": {
+          "edge_stretch_p99": 1.3249059775911174,
+          "surface_fraction_above_2x": 0.00015636249681558136,
+          "collapsed_surface_fraction_below_10pct": 0.0010472583199940275,
+          "movement_p95_height": 0.21360317824538547
+        },
+        "torso_twist": {
+          "edge_stretch_p99": 1.3218345346116513,
+          "surface_fraction_above_2x": 0.0008619299051788042,
+          "collapsed_surface_fraction_below_10pct": 0.00023228659913158693,
+          "movement_p95_height": 0.3813051522812526
+        },
+        "asymmetric": {
+          "edge_stretch_p99": 1.5841047945569315,
+          "surface_fraction_above_2x": 0.004255484038821126,
+          "collapsed_surface_fraction_below_10pct": 0.0001832767098926277,
+          "movement_p95_height": 0.5216951032539858
+        }
+      },
+      "browser_oracle": {
+        "browser_errors": [],
+        "cpu_browser_samples": 108,
+        "cpu_browser_max_error_height": 6.707237194069616e-08
+      },
+      "canonical_nonterminal_bones": 22
+    },
+    {
+      "id": "bolsonaro",
+      "source_sha256": "720e0e84f789956104f285d47324c69ed485ef67e58933065cd5816022be08af",
+      "source_vertices": 21807,
+      "output_vertices": 21807,
+      "triangles": 19310,
+      "bones": 27,
+      "source_unchanged": true,
+      "deterministic_output": true,
+      "correctness_pass": true,
+      "automated_deformation_flags": [],
+      "rest_recovery_max_height": 1.0161731490697848e-07,
+      "weight_sum_max_error": 1.2665987014770508e-07,
+      "process_median_ms": 94.48120900196955,
+      "process_mad_ms": 0.33774899202398956,
+      "native_median_ms": 88.46487499999999,
+      "peak_rss_bytes": 37830656,
+      "peak_process_footprint_bytes": 36520320,
+      "automatic_output_sha256": "9b01c5a2896baf2b12bc5c4471bb154bf9c0d5fbbeb16c85662a36cb3604626a",
+      "quality_output_sha256": "5e4e04c445fb0fc3e966c88d0d6c7cdae3fff597aa05380c1c8016367b436822",
+      "poses": {
+        "rest": {
+          "edge_stretch_p99": 1.000005588398379,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 4.800628369935552e-08
+        },
+        "arms_raised": {
+          "edge_stretch_p99": 1.6429010284872343,
+          "surface_fraction_above_2x": 0.004717771138608577,
+          "collapsed_surface_fraction_below_10pct": 0.00023065708527137337,
+          "movement_p95_height": 0.6249381090185017
+        },
+        "wide_stance": {
+          "edge_stretch_p99": 1.166095726062382,
+          "surface_fraction_above_2x": 6.643944095187333e-06,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.24245663822701233
+        },
+        "crouch": {
+          "edge_stretch_p99": 1.3225900820701675,
+          "surface_fraction_above_2x": 0.0001409677594750416,
+          "collapsed_surface_fraction_below_10pct": 0.0007254872654539675,
+          "movement_p95_height": 0.19863612991414845
+        },
+        "torso_twist": {
+          "edge_stretch_p99": 1.2855451652938157,
+          "surface_fraction_above_2x": 0.0009159196541146692,
+          "collapsed_surface_fraction_below_10pct": 0.0004861322031638938,
+          "movement_p95_height": 0.3659294560944823
+        },
+        "asymmetric": {
+          "edge_stretch_p99": 1.5249521428708228,
+          "surface_fraction_above_2x": 0.002873263511311087,
+          "collapsed_surface_fraction_below_10pct": 0.00043289428571365593,
+          "movement_p95_height": 0.5529887437329228
+        }
+      },
+      "browser_oracle": {
+        "browser_errors": [],
+        "cpu_browser_samples": 108,
+        "cpu_browser_max_error_height": 6.340979821302432e-08
+      },
+      "canonical_nonterminal_bones": 22
+    },
+    {
+      "id": "dwarf-blacksmith",
+      "source_sha256": "2220aa5f37c5291b59056a76ef65ad4ef629a0a6b03e5a074ba1f1c1085485e2",
+      "source_vertices": 13381,
+      "output_vertices": 13381,
+      "triangles": 10000,
+      "bones": 27,
+      "source_unchanged": true,
+      "deterministic_output": true,
+      "correctness_pass": true,
+      "automated_deformation_flags": [],
+      "rest_recovery_max_height": 5.387651974632889e-08,
+      "weight_sum_max_error": 1.126900315284729e-07,
+      "process_median_ms": 54.561291995923966,
+      "process_mad_ms": 0.9518749866401777,
+      "native_median_ms": 48.630333,
+      "peak_rss_bytes": 31653888,
+      "peak_process_footprint_bytes": 30327144,
+      "automatic_output_sha256": "b10b866eaf2663d440077858544cffbc8fc6548ebdb47c6b281ff3de7c260eab",
+      "quality_output_sha256": "77bd7099bf1491df2e0d8545017f10e77c51b7090cb27b13709931205f1d4503",
+      "poses": {
+        "rest": {
+          "edge_stretch_p99": 1.0000017093207465,
+          "surface_fraction_above_2x": 0.0,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 2.5601475892482205e-08
+        },
+        "arms_raised": {
+          "edge_stretch_p99": 1.795542597644349,
+          "surface_fraction_above_2x": 0.006778684778740074,
+          "collapsed_surface_fraction_below_10pct": 0.003066143278828793,
+          "movement_p95_height": 0.6377653939436544
+        },
+        "wide_stance": {
+          "edge_stretch_p99": 1.200206143866059,
+          "surface_fraction_above_2x": 1.2429961311658749e-05,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.16427181432661997
+        },
+        "crouch": {
+          "edge_stretch_p99": 1.3135979119724284,
+          "surface_fraction_above_2x": 0.00041991602266340495,
+          "collapsed_surface_fraction_below_10pct": 0.0006866111326548502,
+          "movement_p95_height": 0.14061210935187027
+        },
+        "torso_twist": {
+          "edge_stretch_p99": 1.2350981542762152,
+          "surface_fraction_above_2x": 0.00017178741762969882,
+          "collapsed_surface_fraction_below_10pct": 0.0,
+          "movement_p95_height": 0.46344040092674216
+        },
+        "asymmetric": {
+          "edge_stretch_p99": 1.6748672744714643,
+          "surface_fraction_above_2x": 0.004394248121052259,
+          "collapsed_surface_fraction_below_10pct": 0.0008157533018898271,
+          "movement_p95_height": 0.7245780229814732
+        }
+      },
+      "browser_oracle": {
+        "browser_errors": [],
+        "cpu_browser_samples": 96,
+        "cpu_browser_max_error_height": 5.9150446826956586e-08
+      },
+      "canonical_nonterminal_bones": 22
+    }
+  ],
+  "limits": [
+    "Six stress poses and one real generated clip provide evidence for this corpus, not every mesh or animation.",
+    "Linear skinning can flatten joint volume and bend armor; it does not simulate fabric or collisions.",
+    "The lower robe follows the pelvis; no hidden leg mesh is reconstructed.",
+    "One mixed robe/skin textured triangle occupies 0.0173% of the demo surface and follows the robe; its painted boundary lies inside a face."
+  ],
+  "ui": {
+    "frames": 150,
+    "fps": 30.0,
+    "inference_seconds": 6.00814283300133,
+    "characters": [
+      "musk",
+      "dwarf-blacksmith",
+      "tunic"
+    ],
+    "page_errors": [],
+    "console_errors": [],
+    "default_recovery": true
+  },
+  "visual_review": {
+    "scope": "Severe deformation stability in the tested corpus",
+    "ordinary_characters_passed": 9,
+    "tunic": "Sleeve spikes, hem ribbons and deformed sandals corrected; rigid garment and exposed ankle ends remain in extreme poses."
+  }
+}

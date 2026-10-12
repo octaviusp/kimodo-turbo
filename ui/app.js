@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/OrbitControls.js';
-import { mapBones } from './mapping.js';
+import { mapBones, validateMapping } from './mapping.js';
 import { Retargeter, decodeMotion } from './retarget.js';
 
 const $ = (id) => document.getElementById(id);
@@ -22,6 +22,7 @@ const state = {
   playing: false,
   ready: false,
   generating: false,
+  loadingCharacter: false,
 };
 
 // ---------- scene ----------
@@ -73,6 +74,19 @@ new ResizeObserver(resize).observe(viewport);
 
 const DISPLAY_HEIGHT = 1.75; // metres; files arrive in any unit (Mixamo exports are often cm x 0.01)
 
+function orientModel(root, report) {
+  if (!report.up || !report.forward) return;
+  const up = new THREE.Vector3(...report.up).normalize();
+  const forward = new THREE.Vector3(...report.forward).normalize();
+  const right = new THREE.Vector3().crossVectors(up, forward).normalize();
+  if (!Number.isFinite(right.lengthSq()) || right.lengthSq() < 0.5) {
+    throw new Error('The character orientation could not be determined.');
+  }
+  forward.crossVectors(right, up).normalize();
+  const basis = new THREE.Matrix4().makeBasis(right, up, forward);
+  root.quaternion.premultiply(new THREE.Quaternion().setFromRotationMatrix(basis).invert());
+}
+
 /** Scale the model to a person's height, feet on the floor, centred on the origin. */
 function normalizeModel(root) {
   root.updateMatrixWorld(true);
@@ -121,47 +135,126 @@ function genStatus(text, isError = false) {
 // ---------- model loading ----------
 const loader = new GLTFLoader();
 
-async function loadModel(buffer) {
+function disposeModel(root) {
+  const geometries = new Set();
+  const materials = new Set();
+  const textures = new Set();
+  root.traverse((object) => {
+    if (object.geometry) geometries.add(object.geometry);
+    for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+      if (!material) continue;
+      materials.add(material);
+      for (const value of Object.values(material)) if (value?.isTexture) textures.add(value);
+    }
+  });
+  for (const geometry of geometries) geometry.dispose();
+  for (const material of materials) material.dispose();
+  for (const texture of textures) texture.dispose();
+}
+
+async function loadModel(buffer, report) {
   const gltf = await loader.parseAsync(buffer, '');
-  if (state.model) {
-    state.retargeter?.reset();
-    scene.remove(state.model.root);
-  }
   const root = gltf.scene;
   const bones = [];
-  root.traverse((o) => {
-    if (o.isMesh) {
-      o.castShadow = true;
-      o.frustumCulled = false; // skinned bounds do not follow the animation
+  let skinnedMeshes = 0;
+  root.traverse((object) => {
+    if (object.isMesh) {
+      object.castShadow = true;
+      object.frustumCulled = false;
     }
-    if (o.isBone) bones.push(o);
+    if (object.isBone) {
+      const node = gltf.parser.associations.get(object)?.nodes;
+      object.name = gltf.parser.json.nodes[node]?.name || object.name;
+      bones.push(object);
+    }
+    if (object.isSkinnedMesh) skinnedMeshes++;
   });
-  root.traverse((o) => o.isSkinnedMesh && o.skeleton.pose());
-  if (!bones.length) throw new Error('The bundled character has no skeleton.');
-  scene.add(root);
-  normalizeModel(root);
-  state.model = { root, bones, mapping: mapBones(bones) };
-  frameModel(root);
-  rebuildRetargeter();
+  try {
+    if (!skinnedMeshes || !bones.length) throw new Error('The prepared character has no usable skeleton.');
+    root.traverse((object) => { if (object.isSkinnedMesh) object.skeleton.pose(); });
+    const mapping = mapBones(bones);
+    validateMapping(mapping);
+    orientModel(root, report);
+    normalizeModel(root);
+    if (state.model) {
+      state.retargeter?.reset();
+      scene.remove(state.model.root);
+      disposeModel(state.model.root);
+    }
+    scene.add(root);
+    state.model = { root, bones, mapping };
+    frameModel(root);
+    rebuildRetargeter();
+  } catch (error) {
+    disposeModel(root);
+    throw error;
+  }
 }
 
 function updateGenerateButton() {
-  $('generate').disabled = !state.ready || !state.model || state.generating;
+  const unavailable = state.generating || state.loadingCharacter;
+  $('generate').disabled = !state.ready || !state.model || unavailable;
+  $('choose-character').disabled = unavailable;
+  $('default-character').disabled = unavailable;
 }
 
-async function loadDefault() {
-  busy('Loading character…');
+function characterStatus(text, isError = false) {
+  const element = $('character-status');
+  element.textContent = text;
+  element.style.color = isError ? 'var(--bad)' : '';
+}
+
+async function prepareCharacter(buffer, name) {
+  const response = await fetch('/api/character', {
+    method: 'POST', headers: { 'Content-Type': 'model/gltf-binary' }, body: buffer,
+  });
+  if (!response.ok) {
+    const payload = await response.json();
+    throw new Error(payload.error || 'The character could not be prepared.');
+  }
+  const report = JSON.parse(response.headers.get('X-Rig-Report') || '{}');
+  await loadModel(await response.arrayBuffer(), report);
+  state.model.report = report;
+  characterStatus(`${name} is ready.`);
+}
+
+async function changeCharacter(read, name) {
+  if (state.loadingCharacter || state.generating) return;
+  state.loadingCharacter = true;
+  updateGenerateButton();
+  characterStatus('Preparing character…');
+  busy('Preparing character…');
   try {
-    const response = await fetch('/assets/character.glb');
-    if (!response.ok) throw new Error('Character file not found.');
-    await loadModel(await response.arrayBuffer());
-    updateGenerateButton();
+    await prepareCharacter(await read(), name);
   } catch (error) {
-    genStatus(`Could not load the character: ${error.message}`, true);
+    characterStatus(error.message, true);
   } finally {
+    state.loadingCharacter = false;
+    updateGenerateButton();
     busy();
   }
 }
+
+async function loadDefault() {
+  return changeCharacter(async () => {
+    const response = await fetch('/assets/character.glb');
+    if (!response.ok) throw new Error('Default character file not found.');
+    return response.arrayBuffer();
+  }, 'Default character');
+}
+
+$('choose-character').onclick = () => $('character-file').click();
+$('default-character').onclick = loadDefault;
+$('character-file').onchange = async (event) => {
+  const file = event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+  if (!/\.glb$/i.test(file.name)) return characterStatus('Choose a .glb character file.', true);
+  if (!file.size || file.size > 100 * 1024 * 1024) {
+    return characterStatus('Choose a .glb character smaller than 100 MB.', true);
+  }
+  await changeCharacter(() => file.arrayBuffer(), file.name);
+};
 
 function rebuildRetargeter() {
   state.retargeter?.reset();
@@ -187,7 +280,7 @@ for (const [label, prompt] of PRESETS) {
 $('prompt').value = PRESETS[1][1];
 
 async function generate() {
-  if (!state.ready || !state.model || state.generating) return;
+  if (!state.ready || !state.model || state.generating || state.loadingCharacter) return;
   const prompt = $('prompt').value.trim();
   if (!prompt) return genStatus('Describe the motion first.', true);
   const seconds = Number($('duration').value);

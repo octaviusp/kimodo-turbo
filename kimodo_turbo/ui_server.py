@@ -14,6 +14,7 @@ from uuid import uuid4
 import numpy as np
 
 from .paths import OUT, UI
+from .rigging import MAX_CHARACTER_BYTES, rig_character
 
 MOTIONS = OUT / "motions"
 MAX_BODY = 16 * 1024
@@ -135,11 +136,13 @@ def make_handler(service: MotionService):
             if int(args[1]) >= 400:
                 super().log_message(fmt, *args)
 
-        def _send(self, status: int, body: bytes, content_type: str) -> None:
+        def _send(self, status: int, body: bytes, content_type: str, headers: dict | None = None) -> None:
             self.send_response(status)
             self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(body)))
             self.send_header("Cache-Control", "no-store")
+            for key, value in (headers or {}).items():
+                self.send_header(key, value)
             self.end_headers()
             self.wfile.write(body)
 
@@ -160,6 +163,18 @@ def make_handler(service: MotionService):
             self._send(HTTPStatus.OK, target.read_bytes(), CONTENT_TYPES.get(target.suffix, "application/octet-stream"))
 
         def do_POST(self):
+            if self.path == "/api/character":
+                try:
+                    length = int(self.headers.get("Content-Length", 0))
+                    if not 0 < length <= MAX_CHARACTER_BYTES:
+                        raise ValueError("Choose a GLB character between 1 byte and 100 MB.")
+                    path, report = rig_character(self.rfile.read(length))
+                    self._send(HTTPStatus.OK, path.read_bytes(), "model/gltf-binary", {
+                        "X-Rig-Report": json.dumps(report, separators=(",", ":"), ensure_ascii=True),
+                    })
+                except (ValueError, RuntimeError, OSError) as error:
+                    self._json(HTTPStatus.UNPROCESSABLE_ENTITY, {"error": str(error)})
+                return
             if self.path != "/api/generate":
                 return self._json(HTTPStatus.NOT_FOUND, {"error": "Endpoint not found."})
             if self.headers.get("Content-Type", "").split(";", 1)[0] != "application/json":

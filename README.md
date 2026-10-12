@@ -27,8 +27,8 @@ See [measurement details and precision checks](PERF.md) and [raw results](docs/l
 
 ## Run
 
-Requirements: Apple Silicon, macOS, Python 3.12 and `uv`, plus CMake and a C++ compiler for
-Kimodo's post-processing extension. Keep the checkout in its installed location.
+Requirements: Apple Silicon, macOS, Python 3.12, `uv`, Rust 1.88+, CMake and a C++ compiler.
+Keep the checkout in its installed location.
 
 ```sh
 ./scripts/setup.zsh
@@ -36,7 +36,8 @@ Kimodo's post-processing extension. Keep the checkout in its installed location.
 ```
 
 Open **http://127.0.0.1:8765**. Describe the motion, set its duration, and click **Generate motion**.
-The included character plays the result. Scrub, pause, change playback speed, or download the NPZ.
+The included character plays the result. **Choose character** loads your own GLB and prepares
+its skeleton automatically. Scrub, pause, change playback speed, or download the NPZ.
 The UI uses 100 diffusion steps and foot-skate post-processing by default.
 
 Use the CLI for constraints, multiple prompts and export options:
@@ -51,6 +52,39 @@ Use the CLI for constraints, multiple prompts and export options:
 Outputs default to `out/motions/`. Default model: `Kimodo-SOMA-RP-v1`.
 `KIMODO_TURBO_NO_CACHE=1` disables the exact text-embedding cache.
 Use `ui --port 9000` to select another local port.
+
+## Character autorig
+
+The native Rust autorig works independently of motion inference:
+
+```sh
+./scripts/build-autorig.zsh
+./scripts/autorig.zsh character.glb out/characters/character-rigged.glb \
+  --report out/characters/character-rigged.json
+```
+
+Use a standing humanoid in a neutral, A or T pose, with embedded geometry and textures.
+The tool fits 27 body joints, finds surface distances and solves smooth skin weights with
+preconditioned conjugate gradients. Body-volume priors keep the waist out of the arm weights.
+For a continuous lower garment, it separates clothing and footwear attachment seams while
+preserving rest triangle positions, UVs, normals and texture payloads.
+
+Existing authored skins are preserved; `--force` rebuilds them. `--up` and `--forward` override
+automatic orientation. Identical input and options produce identical GLB bytes with the same
+build. The UI caches prepared characters by source and executable hashes.
+
+Validated on **10 local characters** across six stress poses: rest recovery, skin weights,
+triangle geometry and repeatable output pass in all ten. Native preparation takes
+**54.6–94.5 ms** per character, with **50.3 MB** maximum process RSS on this Mac.
+
+![Native autorig preparation time for ten characters](docs/assets/autorig-time.png)
+
+![Previous character rig vs native: sleeve spikes and foot-driven robe stretching corrected](docs/assets/autorig-comparison.png)
+
+Long garments follow the pelvis. This is body skinning, with no fabric dynamics or collision
+simulation; extreme leg poses can expose ankle ends or intersect fabric. Hidden joints are
+fitted from proportions, and missing leg geometry is not reconstructed.
+See [validation and measurements](PERF.md#character-autorig).
 
 ## Weights and setup
 
@@ -69,12 +103,14 @@ Llama weights use the Meta Llama 3 Community License. Setup retains the checkpoi
 ## Code
 
 ```text
-kimodo_turbo/   CLI, streamed encoder, MLX denoiser, upstream adapter, local UI server
-ui/            Simple motion preview, bundled character and local Three.js modules
-scripts/       Reproducible setup and source-weight verification
-patches/       Apple Silicon build support and lazy encoder import
-docs/         Recorded benchmark evidence and comparison charts
-out/           Local inference weights, caches and generated motions (ignored)
+kimodo_turbo/    CLI, streamed encoder, MLX denoiser, upstream adapter, local UI server
+native/         Deterministic humanoid fitting, skin weights and GLB export
+ui/             Simple motion preview, bundled character and local Three.js modules
+scripts/        Setup, native autorig entry points and independent validation
+tests/          Analytical skinning and transformation checks
+patches/        Apple Silicon build support and lazy encoder import
+docs/           Recorded benchmark evidence and comparison charts
+out/            Local inference weights, caches and generated motions (ignored)
 ```
 
 Turbo streams encoder layers, compiles the FP32 denoising step, reuses constant tokens and skips

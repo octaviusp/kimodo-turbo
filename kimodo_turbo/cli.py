@@ -3,6 +3,7 @@
   kimodo-turbo gen "A person walks forward." [any kimodo_gen option]
   kimodo-turbo ui [--port N]    # local motion preview at http://127.0.0.1:8765
   kimodo-turbo convert          # one-time: build the streamed text-encoder shards
+  kimodo-turbo autorig IN OUT   # deterministic native GLB rigging; use --help for options
 
 `gen` runs kimodo's own generate script (same arguments, constraints, NPZ/BVH/CSV outputs)
 with the model loader swapped for TurboKimodo.
@@ -12,7 +13,7 @@ import os
 import sys
 import time
 
-from .paths import EMBEDDING_CACHE, OUT, SHARDS
+from .paths import EMBEDDING_CACHE, OUT, SHARDS, TOOL_ROOT
 
 USAGE = __doc__
 
@@ -68,6 +69,11 @@ def main() -> None:
         from .convert import convert
 
         convert(SHARDS)
+    elif command == "autorig":
+        binary = OUT / "bin" / "kimodo-autorig"
+        if not binary.is_file():
+            sys.exit(f"Native autorig is not built. Run {TOOL_ROOT / 'scripts/build-autorig.zsh'}")
+        os.execv(binary, [str(binary), *rest])
     else:
         sys.exit(f"Unknown command {command!r}\n{USAGE}")
 

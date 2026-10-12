@@ -9,6 +9,7 @@ sse2neon_sha256=78632498a57bf7e080e84cb8d74c47ce93b204cece77eab79de2908eb8bc92ed
 llama_mirror=NousResearch/Meta-Llama-3-8B-Instruct
 
 cd "$tool_root"
+./scripts/build-autorig.zsh
 mkdir -p .deps out/weights
 if [[ ! -d .deps/kimodo/.git ]]; then
   git clone --quiet https://github.com/nv-tlabs/kimodo.git .deps/kimodo

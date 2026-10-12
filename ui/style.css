@@ -102,3 +102,6 @@ main canvas { display: block; width: 100%; height: 100%; }
 
 .download { display: inline-block; margin-top: 8px; color: var(--accent); }
 [hidden] { display: none !important; }
+
+.character-actions { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+#character-status { overflow-wrap: anywhere; margin-bottom: 0; }
