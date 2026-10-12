@@ -8,9 +8,8 @@ mirrors kimodo's text_encoder_fp32 option (bf16 weights upcast, fp32 activations
 """
 
 import json
-import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import List, Optional
 
 import mlx.core as mx
 import numpy as np
@@ -26,34 +25,31 @@ PROJECTIONS = ("q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "
 class ShardPrefetcher:
     """Loads layer shards in a background thread so SSD reads overlap GPU compute."""
 
-    def __init__(self, paths: List[Path]):
+    def __init__(self, paths: list[Path]):
         self.paths = paths
-        self._next: Optional[dict] = None
-        self._thread: Optional[threading.Thread] = None
 
-    def _load(self, index: int) -> None:
+    def _load(self, index: int) -> dict:
         weights = mx.load(str(self.paths[index]))
         mx.eval(weights)
-        self._next = weights
+        return weights
 
     def __iter__(self):
-        self._load(0)
-        for index in range(len(self.paths)):
-            weights = self._next
-            if index + 1 < len(self.paths):
-                self._thread = threading.Thread(target=self._load, args=(index + 1,))
-                self._thread.start()
-            yield weights
-            del weights
-            if self._thread is not None:
-                self._thread.join()
-                self._thread = None
+        if not self.paths:
+            return
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            weights = self._load(0)
+            for index in range(len(self.paths)):
+                pending = pool.submit(self._load, index + 1) if index + 1 < len(self.paths) else None
+                yield weights
+                if pending is not None:
+                    # Propagate read failures instead of silently reusing the previous layer.
+                    weights = pending.result()
 
 
 class StreamingLlm2Vec:
     """Kimodo text-encoder contract: texts -> ([B, 1, 4096] fp32 tensor, [1] * B)."""
 
-    def __init__(self, shard_dir: Path, cache: Optional[EmbeddingCache] = None, compute_dtype=mx.bfloat16):
+    def __init__(self, shard_dir: Path, cache: EmbeddingCache | None = None, compute_dtype=mx.bfloat16):
         self.dir = Path(shard_dir)
         self.manifest = json.loads((self.dir / "manifest.json").read_text())
         cfg = self.manifest["config"]
@@ -99,7 +95,10 @@ class StreamingLlm2Vec:
         inv_freq = 1.0 / (self.cfg["rope_theta"] ** (torch.arange(0, dim, 2, dtype=torch.int64).float() / dim))
         freqs = (inv_freq[:, None].float() @ torch.arange(length, dtype=torch.float32)[None, :]).T
         emb = torch.cat((freqs, freqs), dim=-1)
-        to_mx = lambda t: mx.array(t.to(torch.bfloat16).view(torch.uint16).numpy()).view(mx.bfloat16)
+
+        def to_mx(t: torch.Tensor) -> mx.array:
+            return mx.array(t.to(torch.bfloat16).view(torch.uint16).numpy()).view(mx.bfloat16)
+
         if self.dtype == mx.float32:
             return mx.array(emb.cos().numpy()), mx.array(emb.sin().numpy())
         return to_mx(emb.cos()), to_mx(emb.sin())
@@ -141,20 +140,17 @@ class StreamingLlm2Vec:
         act = (gate * mx.sigmoid(gate)).astype(self.dtype) * self._proj(x, w, "up_proj")
         return h + self._proj(act, w, "down_proj")
 
-    def hidden_states(self, ids: list[int], collect: bool = False):
+    def hidden_states(self, ids: list[int]) -> mx.array:
         rows = np.ascontiguousarray(self.embed[np.asarray(ids)])
         h = mx.array(rows).view(mx.bfloat16)[None].astype(self.dtype)
         cos, sin = self._rope(len(ids))
         mask = "causal" if self.causal else None
-        per_layer = []
         for weights in ShardPrefetcher(self.layer_paths):
             if self.dtype != mx.bfloat16:
                 weights = {k: v.astype(self.dtype) for k, v in weights.items()}
             h = self._layer(h, weights, cos, sin, mask)
             mx.eval(h)
-            if collect:
-                per_layer.append(np.array(h.astype(mx.float32))[0])
-        return h, per_layer
+        return h
 
     def encode_one(self, text: str) -> np.ndarray:
         if self.cache is not None:
@@ -162,7 +158,7 @@ class StreamingLlm2Vec:
             if cached is not None:
                 return cached
         ids, embed_len = self.tokenize(text)
-        h, _ = self.hidden_states(ids)
+        h = self.hidden_states(ids)
         h = self._rms_norm(h, self.final_norm)
         pooled = mx.mean(h[0, len(ids) - embed_len :].astype(mx.float32), axis=0).astype(self.dtype)
         embedding = np.array(pooled.astype(mx.float32))

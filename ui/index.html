@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kimodo Turbo</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.min.js", "three/addons/": "./vendor/addons/" } }
+  </script>
+</head>
+<body>
+  <aside class="panel">
+    <header class="brand">
+      <h1>Kimodo Turbo</h1>
+      <span id="status" class="pill pill-wait" role="status">Loading model…</span>
+    </header>
+    <p class="hint">Describe a motion. Generate it. Watch it play.</p>
+    <section>
+      <h2>Motion</h2>
+      <div class="chips" id="presets" aria-label="Example motions"></div>
+      <label for="prompt">Description</label>
+      <textarea id="prompt" rows="4" maxlength="2000" placeholder="A person walks forward casually."></textarea>
+      <div class="grid2">
+        <label>Duration (seconds)<input id="duration" type="number" value="5" min="0.5" max="10" step="0.5"></label>
+        <label>Seed<input id="seed" type="number" value="0" min="0" max="4294967295" step="1"></label>
+      </div>
+      <button id="generate" class="primary" disabled>Generate motion</button>
+      <p id="gen-status" class="muted" role="status" aria-live="polite">English prompts work best. Cmd/Ctrl+Enter to generate.</p>
+      <a id="download" class="download" hidden download>Download motion (.npz)</a>
+    </section>
+    <section>
+      <h2>Playback</h2>
+      <div class="transport">
+        <button id="play" class="icon" disabled aria-label="Play">▶</button>
+        <input id="scrub" type="range" min="0" max="1" step="0.001" value="0" disabled aria-label="Playback position">
+        <span id="time" class="mono">0.0 / 0.0 s</span>
+      </div>
+      <div class="grid2">
+        <label>Speed<select id="speed"><option>0.5</option><option selected>1</option><option>2</option></select></label>
+        <label class="check"><input id="loop" type="checkbox" checked> Loop</label>
+        <label class="check"><input id="inplace" type="checkbox"> In place</label>
+        <label class="check"><input id="follow" type="checkbox" checked> Follow character</label>
+        <label class="check"><input id="skeleton" type="checkbox"> Show skeleton</label>
+      </div>
+    </section>
+    <p class="hint">Drag to orbit · Scroll to zoom · Space to play/pause</p>
+  </aside>
+  <main id="viewport" aria-label="3D motion preview">
+    <div id="busy" class="busy" hidden role="status"><div class="spinner"></div><span id="busy-text"></span></div>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

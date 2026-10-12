@@ -1,0 +1,101 @@
+{
+  "prompt": "A person jumps over an obstacle and lands softly.",
+  "duration_s": 5.0,
+  "summary": {
+    "baseline": {
+      "n": 2,
+      "wall_s_median": 71.78,
+      "wall_s_max": 83.58,
+      "peak_footprint_gb_max": 17.00575316,
+      "max_rss_gb_max": 15.526117376
+    },
+    "turbo-cached": {
+      "n": 5,
+      "wall_s_median": 8.2,
+      "wall_s_max": 8.34,
+      "peak_footprint_gb_max": 2.398456256,
+      "max_rss_gb_max": 1.70868736
+    },
+    "turbo-nocache": {
+      "n": 5,
+      "wall_s_median": 8.76,
+      "wall_s_max": 8.95,
+      "peak_footprint_gb_max": 3.741945336,
+      "max_rss_gb_max": 3.042787328
+    }
+  },
+  "runs": [
+    {
+      "variant": "turbo-nocache",
+      "wall_s": 8.88,
+      "max_rss_gb": 2.742648832,
+      "peak_footprint_gb": 3.702509
+    },
+    {
+      "variant": "turbo-cached",
+      "wall_s": 8.34,
+      "max_rss_gb": 1.707098112,
+      "peak_footprint_gb": 2.398456256
+    },
+    {
+      "variant": "baseline",
+      "wall_s": 83.58,
+      "max_rss_gb": 15.526117376,
+      "peak_footprint_gb": 16.862901064
+    },
+    {
+      "variant": "turbo-nocache",
+      "wall_s": 8.28,
+      "max_rss_gb": 2.721644544,
+      "peak_footprint_gb": 3.42363684
+    },
+    {
+      "variant": "turbo-cached",
+      "wall_s": 8.32,
+      "max_rss_gb": 1.707507712,
+      "peak_footprint_gb": 2.396965216
+    },
+    {
+      "variant": "baseline",
+      "wall_s": 59.98,
+      "max_rss_gb": 15.486582784,
+      "peak_footprint_gb": 17.00575316
+    },
+    {
+      "variant": "turbo-nocache",
+      "wall_s": 8.76,
+      "max_rss_gb": 2.957459456,
+      "peak_footprint_gb": 3.659533744
+    },
+    {
+      "variant": "turbo-cached",
+      "wall_s": 8.14,
+      "max_rss_gb": 1.70835968,
+      "peak_footprint_gb": 2.3952122
+    },
+    {
+      "variant": "turbo-nocache",
+      "wall_s": 8.95,
+      "max_rss_gb": 3.042787328,
+      "peak_footprint_gb": 3.741945336
+    },
+    {
+      "variant": "turbo-cached",
+      "wall_s": 8.2,
+      "max_rss_gb": 1.70868736,
+      "peak_footprint_gb": 2.397915608
+    },
+    {
+      "variant": "turbo-nocache",
+      "wall_s": 6.48,
+      "max_rss_gb": 2.602614784,
+      "peak_footprint_gb": 3.304705288
+    },
+    {
+      "variant": "turbo-cached",
+      "wall_s": 6.07,
+      "max_rss_gb": 1.705525248,
+      "peak_footprint_gb": 2.397473144
+    }
+  ]
+}

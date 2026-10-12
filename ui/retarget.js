@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-// Kimodo motion -> any humanoid skeleton.
+// Kimodo motion -> the bundled character skeleton.
 //
 // Kimodo's global joint rotations are relative to its T-pose rest (identity = rest). Calibration
 // builds the source pose that matches the target's own rest pose: the hips frame (up + hip
@@ -60,12 +60,12 @@ export class Retargeter {
     const boneOf = new Map([...mapping].map(([bone, joint]) => [joint, bone]));
     this.boneOf = boneOf;
     const hips = boneOf.get('Hips');
-    if (!hips) throw new Error('Asigná un hueso a "Hips" para poder animar el modelo');
+    if (!hips) throw new Error('The character must contain a Hips bone.');
 
     // Hips frame: up = towards the highest mapped spine joint, lateral = left minus right.
     const top = ['Chest', 'Spine2', 'Spine1', 'Neck1', 'Head'].find((j) => boneOf.has(j));
     const pair = ['Leg', 'Arm', 'Shoulder'].find((p) => boneOf.has(`Left${p}`) && boneOf.has(`Right${p}`));
-    if (!top || !pair) throw new Error('Faltan huesos de columna o de piernas/brazos para orientar el modelo');
+    if (!top || !pair) throw new Error('The character is missing spine or limb bones.');
     const srcUp = v(rest, J[top]).sub(v(rest, J.Hips));
     const srcLat = v(rest, J[`Left${pair}`]).sub(v(rest, J[`Right${pair}`]));
     const tgtUp = restWorldP.get(boneOf.get(top)).clone().sub(restWorldP.get(hips));
@@ -169,24 +169,6 @@ export class Retargeter {
     hips.parent.updateWorldMatrix(true, false);
     hips.position.copy(hips.parent.worldToLocal(target));
     this.root.updateMatrixWorld(true);
-  }
-
-  /** Mean angle (degrees) between each mapped target bone and its source bone direction. */
-  directionError(frame) {
-    const J = this.motion.index;
-    let sum = 0;
-    let n = 0;
-    const a = new THREE.Vector3();
-    const b = new THREE.Vector3();
-    for (const [joint, child] of this.directionChild) {
-      const bone = this.boneOf.get(joint);
-      const tip = this.boneOf.get(child);
-      const tgt = tip.getWorldPosition(a).sub(bone.getWorldPosition(b)).normalize();
-      const src = this.sourcePos(frame, J[child]).sub(this.sourcePos(frame, J[joint])).normalize();
-      sum += THREE.MathUtils.radToDeg(Math.acos(THREE.MathUtils.clamp(tgt.dot(src), -1, 1)));
-      n++;
-    }
-    return n ? sum / n : 0;
   }
 
   reset() {

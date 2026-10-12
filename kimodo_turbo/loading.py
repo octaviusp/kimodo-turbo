@@ -1,16 +1,16 @@
 """Build TurboKimodo from a kimodo checkpoint folder (config.yaml + model.safetensors + stats)."""
 
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, Optional
 
-from omegaconf import OmegaConf
-
+from huggingface_hub import snapshot_download
 from kimodo.model.backbone import PositionalEncoding
 from kimodo.model.common import instantiate_from_dict
-from kimodo.model.load_model import _resolve_hf_model_path
-from kimodo.model.registry import resolve_model_name
+from kimodo.model.registry import MODEL_NAMES, resolve_model_name
+from omegaconf import OmegaConf
 
 from .denoiser import TwostageDenoiser
+from .paths import WEIGHTS
 from .pipeline import TurboKimodo
 
 DEFAULT_MODEL = "Kimodo-SOMA-RP-v1"
@@ -28,10 +28,15 @@ SUPPORTED_DENOISER = {
 }
 
 
-def resolve_checkpoint(modelname: Optional[str]) -> tuple[str, Path]:
+def resolve_checkpoint(modelname: str | None) -> tuple[str, Path]:
+    """Use standalone local weights; download a selected model only when absent."""
     name = modelname or DEFAULT_MODEL
     short_key = resolve_model_name(name, "Kimodo")
-    return short_key, _resolve_hf_model_path(short_key)
+    repo_id = MODEL_NAMES[short_key]
+    checkpoint_dir = WEIGHTS / repo_id.split("/", 1)[1]
+    if not (checkpoint_dir / "config.yaml").is_file() or not (checkpoint_dir / "model.safetensors").is_file():
+        snapshot_download(repo_id=repo_id, local_dir=checkpoint_dir)
+    return short_key, checkpoint_dir
 
 
 def load_config(checkpoint_dir: Path) -> dict:
@@ -66,7 +71,7 @@ def build_denoiser(cfg: dict):
     return denoiser, motion_rep
 
 
-def load_turbo_model(modelname: Optional[str], text_encoder: Callable) -> tuple[TurboKimodo, str]:
+def load_turbo_model(modelname: str | None, text_encoder: Callable) -> tuple[TurboKimodo, str]:
     short_key, checkpoint_dir = resolve_checkpoint(modelname)
     cfg = load_config(checkpoint_dir)
     denoiser, motion_rep = build_denoiser(cfg)

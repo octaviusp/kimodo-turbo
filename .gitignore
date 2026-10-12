@@ -4,4 +4,3 @@ __pycache__/
 *.pyc
 .deps/
 *.egg-info/
-results.tsv

@@ -65,7 +65,9 @@ def _lora_parts(module, layer_index: int, name: str) -> tuple[dict, float | None
     if not hasattr(module, "lora_A"):
         return {f"{name}.weight": module.weight.detach().contiguous()}, None
     if module.merged_adapters or len(module.active_adapters) != 1:
-        raise NotImplementedError(f"layer {layer_index} {name}: merged={module.merged_adapters} active={module.active_adapters}")
+        raise NotImplementedError(
+            f"layer {layer_index} {name}: merged={module.merged_adapters} active={module.active_adapters}"
+        )
     adapter = module.active_adapters[0]
     if module.lora_dropout[adapter].training:
         raise RuntimeError("Reference model must be in eval mode (LoRA dropout active)")

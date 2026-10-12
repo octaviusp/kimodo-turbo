@@ -6,8 +6,9 @@ build-backend = "setuptools.build_meta"
 name = "kimodo-turbo"
 version = "0.1.0"
 description = "Kimodo motion generation on Apple Silicon with MLX in a few GB of RAM"
+readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["kimodo", "mlx>=0.32.3", "numpy", "safetensors", "tokenizers", "torch"]
+dependencies = ["kimodo", "mlx==0.32.3", "numpy", "safetensors", "tokenizers", "torch==2.14.1"]
 
 [project.scripts]
 kimodo-turbo = "kimodo_turbo.cli:main"
@@ -17,3 +18,8 @@ packages = ["kimodo_turbo"]
 
 [tool.ruff]
 line-length = 120
+target-version = "py312"
+cache-dir = "out/cache/ruff"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP"]

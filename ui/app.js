@@ -1,26 +1,27 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/OrbitControls.js';
-import { MAPPABLE_JOINTS, autoMap } from './mapping.js';
+import { mapBones } from './mapping.js';
 import { Retargeter, decodeMotion } from './retarget.js';
 
 const $ = (id) => document.getElementById(id);
 const PRESETS = [
-  ['Correr', 'A person runs forward at a steady pace.'],
-  ['Caminar', 'A person walks forward casually.'],
-  ['Saltar', 'A person jumps forward with both feet and lands softly.'],
-  ['Bailar', 'A person dances energetically, spinning around with arms raised.'],
-  ['Patada', 'A person performs a roundhouse kick, then returns to a fighting stance.'],
-  ['Sentarse', 'A person sits down on a chair and waves hello.'],
+  ['Run', 'A person runs forward at a steady pace.'],
+  ['Walk', 'A person walks forward casually.'],
+  ['Jump', 'A person jumps forward with both feet and lands softly.'],
+  ['Dance', 'A person dances energetically, spinning around with arms raised.'],
+  ['Kick', 'A person performs a roundhouse kick, then returns to a fighting stance.'],
+  ['Sit', 'A person sits down on a chair and waves hello.'],
 ];
 
 const state = {
-  model: null, // { root, bones, mapping, name, rig }
-  motions: [], // history: { json, motion, label }
+  model: null,
   current: null,
   retargeter: null,
   time: 0,
   playing: false,
+  ready: false,
+  generating: false,
 };
 
 // ---------- scene ----------
@@ -120,7 +121,7 @@ function genStatus(text, isError = false) {
 // ---------- model loading ----------
 const loader = new GLTFLoader();
 
-async function loadModel(buffer, name, rig, report) {
+async function loadModel(buffer) {
   const gltf = await loader.parseAsync(buffer, '');
   if (state.model) {
     state.retargeter?.reset();
@@ -136,70 +137,29 @@ async function loadModel(buffer, name, rig, report) {
     if (o.isBone) bones.push(o);
   });
   root.traverse((o) => o.isSkinnedMesh && o.skeleton.pose());
-  if (!bones.length) throw new Error('El modelo no tiene esqueleto');
+  if (!bones.length) throw new Error('The bundled character has no skeleton.');
   scene.add(root);
   normalizeModel(root);
-  state.model = { root, bones, mapping: autoMap(bones), name, rig, report };
-  $('model-name').textContent = name;
-  $('model-rig').textContent = rig === 'auto'
-    ? `Rig automático · ${report?.detection?.legs === 'covered' ? 'piernas cubiertas' : 'piernas separadas'} · ${bones.length} huesos`
-    : `Rig propio · ${bones.length} huesos · ${state.model.mapping.size} mapeados`;
+  state.model = { root, bones, mapping: mapBones(bones) };
   frameModel(root);
-  renderMapping();
   rebuildRetargeter();
 }
 
-let loadToken = 0;
-async function fetchModel(request, name) {
-  const token = ++loadToken; // the most recent request wins
-  busy(`Preparando ${name}…`);
-  try {
-    const response = await fetch(request.url, request.init);
-    if (!response.ok) throw new Error((await response.json()).error);
-    const report = JSON.parse(response.headers.get('X-Rig-Report') || '{}');
-    const buffer = await response.arrayBuffer();
-    if (token !== loadToken) return;
-    await loadModel(buffer, name, response.headers.get('X-Rig'), report);
-  } catch (error) {
-    genStatus(`No se pudo cargar ${name}: ${error.message}`, true);
-  } finally {
-    busy();
-  }
+function updateGenerateButton() {
+  $('generate').disabled = !state.ready || !state.model || state.generating;
 }
 
-const loadDefault = () => fetchModel({ url: '/api/default-model' }, 'Personaje realista');
-const loadFile = (file) => fetchModel({ url: '/api/rig', init: { method: 'POST', body: file } }, file.name);
-
-$('load-default').onclick = loadDefault;
-$('file').onchange = (e) => e.target.files[0] && loadFile(e.target.files[0]);
-viewport.addEventListener('dragover', (e) => { e.preventDefault(); viewport.classList.add('dragging'); });
-viewport.addEventListener('dragleave', () => viewport.classList.remove('dragging'));
-viewport.addEventListener('drop', (e) => {
-  e.preventDefault();
-  viewport.classList.remove('dragging');
-  const file = [...e.dataTransfer.files].find((f) => f.name.toLowerCase().endsWith('.glb'));
-  if (file) loadFile(file);
-  else genStatus('Solo se aceptan archivos .glb', true);
-});
-
-// ---------- bone mapping ----------
-function renderMapping() {
-  const container = $('mapping');
-  container.replaceChildren();
-  const { bones, mapping } = state.model;
-  for (const bone of bones) {
-    const label = document.createElement('span');
-    label.textContent = bone.name;
-    label.title = bone.name;
-    const select = document.createElement('select');
-    select.append(new Option('—', ''), ...MAPPABLE_JOINTS.map((j) => new Option(j, j)));
-    select.value = mapping.get(bone) || '';
-    select.onchange = () => {
-      if (select.value) mapping.set(bone, select.value);
-      else mapping.delete(bone);
-      rebuildRetargeter();
-    };
-    container.append(label, select);
+async function loadDefault() {
+  busy('Loading character…');
+  try {
+    const response = await fetch('/assets/character.glb');
+    if (!response.ok) throw new Error('Character file not found.');
+    await loadModel(await response.arrayBuffer());
+    updateGenerateButton();
+  } catch (error) {
+    genStatus(`Could not load the character: ${error.message}`, true);
+  } finally {
+    busy();
   }
 }
 
@@ -216,90 +176,56 @@ function rebuildRetargeter() {
   }
 }
 
-// ---------- prompt segments ----------
-function addSegment(prompt = '', duration = 5) {
-  const row = document.createElement('div');
-  row.className = 'segment';
-  row.innerHTML = `<textarea rows="2" placeholder="Describí el movimiento (en inglés)"></textarea>
-    <input type="number" min="0.5" max="10" step="0.5" title="Duración en segundos">
-    <button class="remove" title="Quitar segmento" aria-label="Quitar segmento">✕</button>`;
-  row.querySelector('textarea').value = prompt;
-  row.querySelector('input').value = duration;
-  row.querySelector('.remove').onclick = () => {
-    if ($('segments').children.length > 1) row.remove();
-  };
-  $('segments').append(row);
-}
+// ---------- generation ----------
 for (const [label, prompt] of PRESETS) {
   const chip = document.createElement('button');
   chip.className = 'chip';
   chip.textContent = label;
-  chip.onclick = () => { $('segments').querySelector('textarea').value = prompt; };
+  chip.onclick = () => { $('prompt').value = prompt; };
   $('presets').append(chip);
 }
-addSegment(PRESETS[0][1], 5);
-$('add-segment').onclick = () => addSegment('', 3);
+$('prompt').value = PRESETS[1][1];
 
 async function generate() {
-  const segments = [...$('segments').children].map((row) => ({
-    prompt: row.querySelector('textarea').value.trim(),
-    duration: Number(row.querySelector('input').value),
-  }));
-  if (segments.some((s) => !s.prompt)) return genStatus('Completá la descripción de cada segmento', true);
-  const button = $('generate');
-  button.disabled = true;
+  if (!state.ready || !state.model || state.generating) return;
+  const prompt = $('prompt').value.trim();
+  if (!prompt) return genStatus('Describe the motion first.', true);
+  const seconds = Number($('duration').value);
+  const seed = Number($('seed').value);
+  if (!Number.isFinite(seconds) || seconds < 0.5 || seconds > 10) {
+    return genStatus('Duration must be between 0.5 and 10 seconds.', true);
+  }
+  if (!Number.isInteger(seed) || seed < 0 || seed > 4294967295) {
+    return genStatus('Seed must be an integer between 0 and 4294967295.', true);
+  }
+  state.generating = true;
+  updateGenerateButton();
   const started = performance.now();
-  const timer = setInterval(() => busy(`Generando… ${((performance.now() - started) / 1000).toFixed(1)} s`), 100);
+  const timer = setInterval(() => busy(`Generating… ${((performance.now() - started) / 1000).toFixed(1)} s`), 100);
   try {
     const response = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        segments,
-        seed: Number($('seed').value),
-        steps: Number($('steps').value),
-        postprocess: $('postprocess').checked,
-      }),
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, duration: seconds, seed }),
     });
     const json = await response.json();
     if (!response.ok) throw new Error(json.error);
-    const entry = { json, motion: decodeMotion(json), label: segments.map((s) => s.prompt).join(' → ') };
-    state.motions.unshift(entry);
-    selectMotion(entry);
-    genStatus(`Generado en ${json.seconds.toFixed(1)} s en GPU · ${json.frames} frames a ${json.fps} fps`);
-    renderHistory();
+    selectMotion({ json, motion: decodeMotion(json) });
+    $('download').href = json.download;
+    $('download').hidden = false;
+    genStatus(`Generated in ${json.seconds.toFixed(1)} s · ${json.frames} frames at ${json.fps} fps`);
   } catch (error) {
     genStatus(error.message, true);
   } finally {
     clearInterval(timer);
     busy();
-    button.disabled = false;
+    state.generating = false;
+    updateGenerateButton();
   }
 }
 $('generate').onclick = generate;
-$('segments').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) generate();
+$('prompt').addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) generate();
 });
-
-function renderHistory() {
-  const list = $('history');
-  list.replaceChildren(...state.motions.map((entry) => {
-    const li = document.createElement('li');
-    const button = document.createElement('button');
-    button.className = entry === state.current ? 'active' : '';
-    const prompt = document.createElement('span');
-    prompt.className = 'prompt';
-    prompt.textContent = entry.label;
-    const meta = document.createElement('span');
-    meta.className = 'mono';
-    meta.textContent = `${(entry.json.frames / entry.json.fps).toFixed(1)} s`;
-    button.append(prompt, meta);
-    button.title = entry.label;
-    button.onclick = () => { selectMotion(entry); renderHistory(); };
-    li.append(button);
-    return li;
-  }));
-}
 
 function selectMotion(entry) {
   state.current = entry;
@@ -308,6 +234,7 @@ function selectMotion(entry) {
   $('play').disabled = false;
   $('scrub').disabled = false;
   $('play').textContent = '❚❚';
+  $('play').setAttribute('aria-label', 'Pause');
   rebuildRetargeter();
 }
 
@@ -345,6 +272,7 @@ $('play').onclick = () => {
   if (!state.playing && state.time >= duration()) state.time = 0;
   state.playing = !state.playing;
   $('play').textContent = state.playing ? '❚❚' : '▶';
+  $('play').setAttribute('aria-label', state.playing ? 'Pause' : 'Play');
 };
 $('scrub').oninput = (e) => {
   state.playing = false;
@@ -363,7 +291,6 @@ document.addEventListener('keydown', (e) => {
 
 const clock = new THREE.Clock();
 const followTarget = new THREE.Vector3();
-let metricTimer = 0;
 renderer.setAnimationLoop(() => {
   const dt = clock.getDelta();
   if (state.playing && state.current) {
@@ -382,11 +309,6 @@ renderer.setAnimationLoop(() => {
     controls.target.add(delta);
     camera.position.add(delta);
   }
-  if (rt && (metricTimer += dt) > 0.5) {
-    metricTimer = 0;
-    const frame = Math.min(state.time * state.current.json.fps, state.current.json.frames - 1);
-    $('metric').textContent = `Error de dirección del retarget: ${rt.directionError(frame).toFixed(1)}° (huesos mapeados: ${state.model.mapping.size})`;
-  }
   controls.update();
   renderer.render(scene, camera);
 });
@@ -396,8 +318,9 @@ async function pollStatus() {
   try {
     const status = await (await fetch('/api/status')).json();
     if (status.ready) {
-      setStatus('Listo', 'ok');
-      $('generate').disabled = false;
+      setStatus('Ready', 'ok');
+      state.ready = true;
+      updateGenerateButton();
       return;
     }
     if (status.error) {
@@ -406,11 +329,11 @@ async function pollStatus() {
       return;
     }
   } catch {
-    setStatus('Sin servidor', 'bad');
+    setStatus('Connecting', 'wait');
   }
   setTimeout(pollStatus, 1000);
 }
 resize();
 pollStatus();
 loadDefault();
-window.gym = state; // inspection hook for QA scripts
+window.kimodoTurbo = state;

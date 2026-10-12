@@ -7,7 +7,6 @@ the exact prompt string, so a repeated prompt skips the 15 GB weight stream and 
 import hashlib
 import json
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 
@@ -24,7 +23,7 @@ class EmbeddingCache:
     def _path(self, text: str) -> Path:
         return self.dir / f"{hashlib.sha256(text.encode('utf-8')).hexdigest()}.npy"
 
-    def get(self, text: str) -> Optional[np.ndarray]:
+    def get(self, text: str) -> np.ndarray | None:
         path = self._path(text)
         return np.load(path) if path.exists() else None
 

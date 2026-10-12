@@ -7,7 +7,6 @@ embeds the noisy motion and the timestep.
 """
 
 from dataclasses import dataclass
-from typing import Optional
 
 import mlx.core as mx
 import numpy as np
@@ -47,7 +46,7 @@ class EncoderStack:
         time: mx.array,
         heading: mx.array,
         pe: mx.array,
-        mask: Optional[mx.array],
+        mask: mx.array | None,
     ) -> mx.array:
         x = _linear(x, self.p, "input_linear")
         seq = mx.concatenate([text, time, heading, x], axis=1)
@@ -57,15 +56,13 @@ class EncoderStack:
             seq = self._layer(seq, f"seqTransEncoder.layers.{i}", mask)
         return _linear(seq[:, prefix_len:], self.p, "output_linear")
 
-    def _layer(self, x: mx.array, name: str, mask: Optional[mx.array]) -> mx.array:
+    def _layer(self, x: mx.array, name: str, mask: mx.array | None) -> mx.array:
         p = self.p
         batch, length, dim = x.shape
         heads = self.num_heads
         qkv = mx.addmm(p[f"{name}.self_attn.in_proj_bias"], x, p[f"{name}.self_attn.in_proj_weight"].T)
         qkv = qkv.reshape(batch, length, 3, heads, dim // heads).transpose(2, 0, 3, 1, 4)
-        attn = mx.fast.scaled_dot_product_attention(
-            qkv[0], qkv[1], qkv[2], scale=(dim // heads) ** -0.5, mask=mask
-        )
+        attn = mx.fast.scaled_dot_product_attention(qkv[0], qkv[1], qkv[2], scale=(dim // heads) ** -0.5, mask=mask)
         attn = attn.transpose(0, 2, 1, 3).reshape(batch, length, dim)
         attn = _linear(attn, p, f"{name}.self_attn.out_proj")
         x = mx.fast.layer_norm(x + attn, p[f"{name}.norm1.weight"], p[f"{name}.norm1.bias"], LAYER_NORM_EPS)
@@ -144,7 +141,9 @@ class TwostageDenoiser:
         weights = mx.load(ckpt_path)
         params = {k[len(PREFIX_KEY) :]: v for k, v in weights.items() if k.startswith(PREFIX_KEY)}
         if len(params) != len(weights):
-            raise ValueError(f"Unexpected keys in {ckpt_path}: {sorted(set(weights) - set(PREFIX_KEY + k for k in params))}")
+            raise ValueError(
+                f"Unexpected keys in {ckpt_path}: {sorted(set(weights) - set(PREFIX_KEY + k for k in params))}"
+            )
         mx.eval(params)
         return cls(params, motion_rep, num_layers, num_heads, pe)
 
@@ -162,7 +161,7 @@ class TwostageDenoiser:
         timesteps: mx.array,
         motion_mask: mx.array,
         observed_motion: mx.array,
-        key_mask: Optional[mx.array],
+        key_mask: mx.array | None,
         last_index: mx.array,
     ) -> mx.array:
         x = x * (1 - motion_mask) + observed_motion * motion_mask

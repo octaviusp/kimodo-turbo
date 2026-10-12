@@ -1,0 +1,205 @@
+{
+  "summary": {
+    "ref_vs_oracle": {
+      "mpjpe_cm": 0.5234774127602577,
+      "max_joint_cm": 3.612721234560013,
+      "root_max_cm": 0.586659274995327,
+      "foot_contact_agreement": 0.99875
+    },
+    "turbo_vs_oracle": {
+      "mpjpe_cm": 0.42846593260765076,
+      "max_joint_cm": 2.2472934126853943,
+      "root_max_cm": 0.5719755999743938,
+      "foot_contact_agreement": 0.9991666666666666
+    },
+    "turbo_vs_ref": {
+      "mpjpe_cm": 0.48038437962532043,
+      "max_joint_cm": 3.913997482508421,
+      "root_max_cm": 0.6117452308535576,
+      "foot_contact_agreement": 0.9995833333333333
+    },
+    "max_joint_cm_worst": {
+      "ref_vs_oracle": 15.726470947265625,
+      "turbo_vs_oracle": 5.648930549621582,
+      "turbo_vs_ref": 19.874834060668945
+    }
+  },
+  "rows": [
+    {
+      "prompt": "A person walks forward.",
+      "ref_vs_oracle": {
+        "mpjpe_cm": 0.39841198921203613,
+        "max_joint_cm": 2.6446051597595215,
+        "root_max_cm": 0.9199142456054688,
+        "foot_contact_agreement": 0.9988888888888889
+      },
+      "turbo_vs_oracle": {
+        "mpjpe_cm": 0.22647273540496826,
+        "max_joint_cm": 2.4724602699279785,
+        "root_max_cm": 0.7834911346435547,
+        "foot_contact_agreement": 0.9988888888888889
+      },
+      "turbo_vs_ref": {
+        "mpjpe_cm": 0.18886414170265198,
+        "max_joint_cm": 0.3570067584514618,
+        "root_max_cm": 0.2991795539855957,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_seconds": 7.146054041993921
+    },
+    {
+      "prompt": "A person jumps over an obstacle and lands softly.",
+      "ref_vs_oracle": {
+        "mpjpe_cm": 0.26309117674827576,
+        "max_joint_cm": 1.7500849962234497,
+        "root_max_cm": 0.5669593811035156,
+        "foot_contact_agreement": 0.9966666666666667
+      },
+      "turbo_vs_oracle": {
+        "mpjpe_cm": 0.31920531392097473,
+        "max_joint_cm": 0.7826619148254395,
+        "root_max_cm": 0.5568027496337891,
+        "foot_contact_agreement": 0.9977777777777778
+      },
+      "turbo_vs_ref": {
+        "mpjpe_cm": 0.2503052353858948,
+        "max_joint_cm": 1.7023617029190063,
+        "root_max_cm": 0.3419041633605957,
+        "foot_contact_agreement": 0.9988888888888889
+      },
+      "turbo_seconds": 7.8706236250000075
+    },
+    {
+      "prompt": "Someone dances energetically, spinning around twice with arms raised above their head.",
+      "ref_vs_oracle": {
+        "mpjpe_cm": 0.3094584345817566,
+        "max_joint_cm": 1.3474675416946411,
+        "root_max_cm": 0.2385444939136505,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_vs_oracle": {
+        "mpjpe_cm": 0.526493489742279,
+        "max_joint_cm": 3.4090797901153564,
+        "root_max_cm": 0.4324197769165039,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_vs_ref": {
+        "mpjpe_cm": 0.2918081283569336,
+        "max_joint_cm": 2.0991485118865967,
+        "root_max_cm": 0.2176821231842041,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_seconds": 7.6478517499999725
+    },
+    {
+      "prompt": "A person picks up a box from the floor and places it on a shelf to the right.",
+      "ref_vs_oracle": {
+        "mpjpe_cm": 0.8129135966300964,
+        "max_joint_cm": 15.726470947265625,
+        "root_max_cm": 0.272861123085022,
+        "foot_contact_agreement": 0.9977777777777778
+      },
+      "turbo_vs_oracle": {
+        "mpjpe_cm": 0.29599031805992126,
+        "max_joint_cm": 4.198916435241699,
+        "root_max_cm": 0.13704058527946472,
+        "foot_contact_agreement": 0.9977777777777778
+      },
+      "turbo_vs_ref": {
+        "mpjpe_cm": 1.0553544759750366,
+        "max_joint_cm": 19.874834060668945,
+        "root_max_cm": 0.35970771312713623,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_seconds": 8.935584584003664
+    },
+    {
+      "prompt": "A man performs a roundhouse kick, then returns to a fighting stance.",
+      "ref_vs_oracle": {
+        "mpjpe_cm": 0.243342787027359,
+        "max_joint_cm": 0.48653995990753174,
+        "root_max_cm": 0.2724282443523407,
+        "foot_contact_agreement": 0.9988888888888889
+      },
+      "turbo_vs_oracle": {
+        "mpjpe_cm": 0.5153744220733643,
+        "max_joint_cm": 0.809251070022583,
+        "root_max_cm": 0.5531374216079712,
+        "foot_contact_agreement": 0.9988888888888889
+      },
+      "turbo_vs_ref": {
+        "mpjpe_cm": 0.28827354311943054,
+        "max_joint_cm": 1.2703112363815308,
+        "root_max_cm": 0.2818799614906311,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_seconds": 8.957461083999078
+    },
+    {
+      "prompt": "Walking slowly with shuffled steps, then stopping to look around.",
+      "ref_vs_oracle": {
+        "mpjpe_cm": 0.9140470027923584,
+        "max_joint_cm": 1.7011338472366333,
+        "root_max_cm": 1.6560792922973633,
+        "foot_contact_agreement": 0.9977777777777778
+      },
+      "turbo_vs_oracle": {
+        "mpjpe_cm": 0.18918278813362122,
+        "max_joint_cm": 0.4074566662311554,
+        "root_max_cm": 0.28972625732421875,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_vs_ref": {
+        "mpjpe_cm": 0.8782862424850464,
+        "max_joint_cm": 1.6327332258224487,
+        "root_max_cm": 1.4014005661010742,
+        "foot_contact_agreement": 0.9977777777777778
+      },
+      "turbo_seconds": 7.824570000004314
+    },
+    {
+      "prompt": "A person sits down on a chair, crosses their legs, and waves hello.",
+      "ref_vs_oracle": {
+        "mpjpe_cm": 0.8968003988265991,
+        "max_joint_cm": 4.074993133544922,
+        "root_max_cm": 0.23269057273864746,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_vs_oracle": {
+        "mpjpe_cm": 1.1931017637252808,
+        "max_joint_cm": 5.648930549621582,
+        "root_max_cm": 1.6090869903564453,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_vs_ref": {
+        "mpjpe_cm": 0.6262277960777283,
+        "max_joint_cm": 3.2650535106658936,
+        "root_max_cm": 1.3763964176177979,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_seconds": 7.520563250000123
+    },
+    {
+      "prompt": "A person runs in a circle counterclockwise.",
+      "ref_vs_oracle": {
+        "mpjpe_cm": 0.3497539162635803,
+        "max_joint_cm": 1.1704742908477783,
+        "root_max_cm": 0.5337968468666077,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_vs_oracle": {
+        "mpjpe_cm": 0.1619066298007965,
+        "max_joint_cm": 0.24959060549736023,
+        "root_max_cm": 0.21409988403320312,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_vs_ref": {
+        "mpjpe_cm": 0.2639554738998413,
+        "max_joint_cm": 1.1105308532714844,
+        "root_max_cm": 0.6158113479614258,
+        "foot_contact_agreement": 1.0
+      },
+      "turbo_seconds": 7.2668539579972276
+    }
+  ]
+}

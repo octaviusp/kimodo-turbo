@@ -5,16 +5,13 @@ diffusion loop). Constraint handling, multi-prompt stitching, inverse kinematics
 post-processing and export run unchanged, so their semantics cannot drift.
 """
 
-from typing import Dict, List, Optional
-
 import mlx.core as mx
 import numpy as np
 import torch
-from torch import nn
-from tqdm.auto import tqdm
-
 from kimodo.model.diffusion import DDIMSampler, Diffusion
 from kimodo.model.kimodo_model import Kimodo
+from torch import nn
+from tqdm.auto import tqdm
 
 from .denoiser import TwostageDenoiser
 
@@ -58,14 +55,18 @@ class CfgPlan:
         elif cfg_type == "regular":
             self.rows = [("text", "mask"), ("zero", "zero")]
         elif cfg_type == "separated":
-            self.rows = [("text", "zero"), ("zero", "mask"), ("zero", "zero")] if constrained else [
-                ("text", "zero"),
-                ("zero", "zero"),
-            ]
+            self.rows = (
+                [("text", "zero"), ("zero", "mask"), ("zero", "zero")]
+                if constrained
+                else [
+                    ("text", "zero"),
+                    ("zero", "zero"),
+                ]
+            )
         else:
             raise ValueError(f"Invalid cfg_type: {cfg_type}")
 
-    def combine(self, outs: List[mx.array]) -> mx.array:
+    def combine(self, outs: list[mx.array]) -> mx.array:
         if self.cfg_type == "nocfg":
             return outs[0]
         if self.cfg_type == "regular":
@@ -112,7 +113,7 @@ class TurboKimodo(Kimodo):
     def eval(self):
         return self
 
-    def encode_texts(self, texts: List[str]) -> torch.Tensor:
+    def encode_texts(self, texts: list[str]) -> torch.Tensor:
         """Same contract as Kimodo._generate's text branch: [B, 1, llm_dim] fp32, empty texts zeroed."""
         text_feat, _ = self.text_encoder(texts)
         text_feat = text_feat.to("cpu")
@@ -122,18 +123,18 @@ class TurboKimodo(Kimodo):
 
     def _generate(
         self,
-        texts: List[str],
+        texts: list[str],
         max_frames: int,
         num_denoising_steps: int,
         pad_mask: torch.Tensor,
-        first_heading_angle: Optional[torch.Tensor],
+        first_heading_angle: torch.Tensor | None,
         motion_mask: torch.Tensor,
         observed_motion: torch.Tensor,
-        cfg_weight: Optional[float] = 2.0,
-        text_feat: Optional[torch.Tensor] = None,
-        text_pad_mask: Optional[torch.Tensor] = None,
-        guide_masks: Optional[Dict] = None,
-        cfg_type: Optional[str] = None,
+        cfg_weight: float | None = 2.0,
+        text_feat: torch.Tensor | None = None,
+        text_pad_mask: torch.Tensor | None = None,
+        guide_masks: dict | None = None,
+        cfg_type: str | None = None,
         progress_bar=tqdm,
     ) -> torch.Tensor:
         if guide_masks is not None:
