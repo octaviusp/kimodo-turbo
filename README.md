@@ -96,17 +96,18 @@ See [validation and measurements](PERF.md#character-autorig).
 
 ## Weights and setup
 
-Setup pins and patches upstream Kimodo, installs dependencies in `.venv/`, downloads the
-checkpoint and converts the text encoder once. Conversion needs about **17 GB RAM** temporarily;
-regular inference uses the footprint above. Existing converted weights are reused.
+The complete **16.3 GB** inference model is on
+[Hugging Face: Llama 3 Kimodo Turbo](https://huggingface.co/Javascript/Llama-3-Kimodo-Turbo),
+with the same comparison images and all component licenses.
 
-Only inference weights remain in `out/weights/`: the motion checkpoint and streamed encoder
-shards, about **16.3 GB on disk**. Conversion source weights are deleted after setup. Weights,
-caches and generated motions stay local and are excluded from Git.
+Setup pins and patches upstream Kimodo, installs dependencies in `.venv/`, and downloads a
+pinned model revision into `out/weights/`. It includes the motion checkpoint, normalization
+statistics, tokenizer and streamed encoder shards. **No local weight conversion is required.**
+Downloads resume on repeated runs. Weights, caches and generated motions are excluded from Git.
 
-The Llama-3 mirror is verified against Meta's published SHA-256 values before conversion.
-Upstream Kimodo code uses Apache-2.0; Kimodo weights use the NVIDIA Open Model License and
-Llama weights use the Meta Llama 3 Community License. Setup retains the checkpoint's license.
+Built with Meta Llama 3. Upstream Kimodo code uses Apache-2.0; weights retain the NVIDIA Open
+Model License, Meta Llama 3 Community License and McGill LLM2Vec MIT terms.
+The model repository includes [licenses and attribution](https://huggingface.co/Javascript/Llama-3-Kimodo-Turbo/blob/main/LICENSE).
 
 ## Code
 

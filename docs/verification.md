@@ -15,3 +15,12 @@ Verified on Apple M5 Pro, macOS 26, 2026-10-12.
 
 Validation used temporary scripts outside the repository. Historical performance evidence is
 separate: see [PERF.md](../PERF.md). The README charts were not replaced with single-run timings.
+
+## Hugging Face publication
+
+The [complete inference bundle](https://huggingface.co/Javascript/Llama-3-Kimodo-Turbo/tree/bcdf39bf070269e6dbab045334c93cb47a73f033)
+was verified without authentication: all 56 published bundle files match local SHA-256 hashes
+and sizes, including 44 runtime files. The Hub adds its own root `.gitattributes`.
+Tokenizer, configuration, statistics, normalization weights and both comparison images passed.
+The pinned setup download completed anonymously using existing large weights; shell syntax
+and whitespace checks passed. The full dependency installation was not rerun against the live UI.

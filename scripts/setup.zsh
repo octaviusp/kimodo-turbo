@@ -1,12 +1,13 @@
 #!/usr/bin/env zsh
-# Install pinned upstream inference and Turbo locally. Reuse converted weights on later runs.
+# Install pinned inference code and ready-to-run weights locally.
 set -euo pipefail
 
 tool_root=${0:A:h:h}
 kimodo_commit=58e781898b3d7e328a676a75d3e338c45dce3ad9
 sse2neon_tag=v1.9.1
 sse2neon_sha256=78632498a57bf7e080e84cb8d74c47ce93b204cece77eab79de2908eb8bc92ed
-llama_mirror=NousResearch/Meta-Llama-3-8B-Instruct
+weights_repo=Javascript/Llama-3-Kimodo-Turbo
+weights_revision=bcdf39bf070269e6dbab045334c93cb47a73f033
 
 cd "$tool_root"
 ./scripts/build-autorig.zsh
@@ -29,20 +30,13 @@ if [[ "$actual" != "$sse2neon_sha256" ]]; then
 fi
 
 [[ -x .venv/bin/python ]] || uv venv --python 3.12 .venv
-uv pip install --python .venv/bin/python ./.deps/kimodo 'torch==2.14.1' 'mlx==0.32.3' safetensors tokenizers 'huggingface_hub[hf_xet]'
+uv pip install --python .venv/bin/python ./.deps/kimodo 'torch==2.14.1' 'mlx==0.32.3' safetensors tokenizers 'huggingface_hub[hf_xet]==1.33.0'
 uv pip install --python .venv/bin/python --no-deps -e .
 
 export HF_HOME="$tool_root/out/hf"
-.venv/bin/hf download nvidia/Kimodo-SOMA-RP-v1 --local-dir out/weights/Kimodo-SOMA-RP-v1
-if [[ ! -f out/weights/llm2vec-llama3-8b/manifest.json ]]; then
-  .venv/bin/hf download McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp
-  .venv/bin/hf download McGill-NLP/LLM2Vec-Meta-Llama-3-8B-Instruct-mntp-supervised
-  .venv/bin/hf download "$llama_mirror" --include '*.safetensors' --include '*.json'
-  .venv/bin/python -I "$tool_root/scripts/verify_llama.py"
-  HF_HUB_OFFLINE=1 .venv/bin/kimodo-turbo convert
-fi
-# Conversion source weights are no longer needed for inference.
-rm -rf "$tool_root/out/hf"
+.venv/bin/hf download "$weights_repo" --revision "$weights_revision" --local-dir out/weights \
+  --include 'Kimodo-SOMA-RP-v1/*' --include 'llm2vec-llama3-8b/*' \
+  --include 'licenses/*' --include LICENSE --include NOTICE.txt
 # The installed upstream package includes its runtime code and compiled extension.
 rm -rf "$tool_root/.deps"
 echo "Ready. Run .venv/bin/kimodo-turbo ui or .venv/bin/kimodo-turbo gen --help"
