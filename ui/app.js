@@ -23,7 +23,10 @@ const state = {
   ready: false,
   generating: false,
   loadingCharacter: false,
+  characterId: 'tunic',
 };
+
+const characters = new Map();
 
 // ---------- scene ----------
 const viewport = $('viewport');
@@ -196,6 +199,7 @@ function updateGenerateButton() {
   $('generate').disabled = !state.ready || !state.model || unavailable;
   $('choose-character').disabled = unavailable;
   $('default-character').disabled = unavailable;
+  $('character-select').disabled = unavailable || !characters.size;
 }
 
 function characterStatus(text, isError = false) {
@@ -218,7 +222,7 @@ async function prepareCharacter(buffer, name) {
   characterStatus(`${name} is ready.`);
 }
 
-async function changeCharacter(read, name) {
+async function changeCharacter(read, name, identifier = '') {
   if (state.loadingCharacter || state.generating) return;
   state.loadingCharacter = true;
   updateGenerateButton();
@@ -226,10 +230,12 @@ async function changeCharacter(read, name) {
   busy('Preparing character…');
   try {
     await prepareCharacter(await read(), name);
+    state.characterId = identifier;
   } catch (error) {
     characterStatus(error.message, true);
   } finally {
     state.loadingCharacter = false;
+    $('character-select').value = state.characterId;
     updateGenerateButton();
     busy();
   }
@@ -240,8 +246,38 @@ async function loadDefault() {
     const response = await fetch('/assets/character.glb');
     if (!response.ok) throw new Error('Default character file not found.');
     return response.arrayBuffer();
-  }, 'Default character');
+  }, 'Default character', 'tunic');
 }
+
+async function loadCharacterLibrary() {
+  try {
+    const response = await fetch('/api/characters');
+    const payload = await response.json();
+    if (!response.ok) throw new Error(payload.error || 'The character library could not be loaded.');
+    for (const character of payload.characters) {
+      characters.set(character.id, character);
+      $('character-select').add(new Option(character.label, character.id));
+    }
+    $('character-library').hidden = !characters.size;
+    $('character-select').value = state.characterId;
+    updateGenerateButton();
+  } catch (error) {
+    characterStatus(error.message, true);
+  }
+}
+
+$('character-select').onchange = async (event) => {
+  const character = characters.get(event.target.value);
+  if (!character) return;
+  await changeCharacter(async () => {
+    const response = await fetch(character.url);
+    if (!response.ok) {
+      const payload = await response.json();
+      throw new Error(payload.error || 'The character could not be loaded.');
+    }
+    return response.arrayBuffer();
+  }, character.label, character.id);
+};
 
 $('choose-character').onclick = () => $('character-file').click();
 $('default-character').onclick = loadDefault;
@@ -428,5 +464,6 @@ async function pollStatus() {
 }
 resize();
 pollStatus();
+loadCharacterLibrary();
 loadDefault();
 window.kimodoTurbo = state;

@@ -13,6 +13,7 @@ from uuid import uuid4
 
 import numpy as np
 
+from .character_library import character_catalog, character_source
 from .paths import OUT, UI
 from .rigging import MAX_CHARACTER_BYTES, rig_character
 
@@ -153,6 +154,19 @@ def make_handler(service: MotionService):
             path = unquote(urlsplit(self.path).path)
             if path == "/api/status":
                 return self._json(HTTPStatus.OK, service.status())
+            if path == "/api/characters" or path.startswith("/api/characters/"):
+                try:
+                    if path == "/api/characters":
+                        return self._json(HTTPStatus.OK, {"characters": [
+                            {"id": entry["id"], "label": entry["label"], "url": f'/api/characters/{entry["id"]}'}
+                            for entry in character_catalog()
+                        ]})
+                    return self._send(HTTPStatus.OK, character_source(path.removeprefix("/api/characters/")),
+                                      "model/gltf-binary")
+                except FileNotFoundError as error:
+                    return self._json(HTTPStatus.NOT_FOUND, {"error": str(error)})
+                except (OSError, ValueError, RuntimeError) as error:
+                    return self._json(HTTPStatus.UNPROCESSABLE_ENTITY, {"error": str(error)})
             base = MOTIONS if path.startswith("/motions/") else UI
             relative = path.removeprefix("/motions/") if base == MOTIONS else path.lstrip("/") or "index.html"
             target = (base / relative).resolve()

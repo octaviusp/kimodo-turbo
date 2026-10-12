@@ -38,6 +38,8 @@ Keep the checkout in its installed location.
 Open **http://127.0.0.1:8765**. Describe the motion, set its duration, and click **Generate motion**.
 The included character plays the result. **Choose character** loads your own GLB and prepares
 its skeleton automatically. Scrub, pause, change playback speed, or download the NPZ.
+The **Tested characters** dropdown switches between the ten local validation models when
+their library is installed under `out/characters/library/`. These private assets stay outside Git.
 The UI uses 100 diffusion steps and foot-skate post-processing by default.
 
 Use the CLI for constraints, multiple prompts and export options:
