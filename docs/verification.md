@@ -8,7 +8,6 @@ Verified on Apple M5 Pro, macOS 26, 2026-10-12.
 - Chromium: character loading, generation, playback/pause, scrubbing, skeleton overlay, NPZ download
   and a 390-pixel mobile viewport passed. No browser errors. Downloaded motion: 150 × 77 joints.
 - API: empty prompt, out-of-range duration, invalid JSON shape and negative seed return clear errors.
-- The executable setup script passed with existing converted weights; full first-time conversion was not rerun.
 - Encoder prefetch propagates missing-shard errors; valid and empty streams passed.
   Embeddings remain bit-identical to the committed encoder on two prompts.
 - Ruff, formatting and shell syntax checks passed.
@@ -23,4 +22,21 @@ was verified without authentication: all 56 published bundle files match local S
 and sizes, including 44 runtime files. The Hub adds its own root `.gitattributes`.
 Tokenizer, configuration, statistics, normalization weights and both comparison images passed.
 The pinned setup download completed anonymously using existing large weights; shell syntax
-and whitespace checks passed. The full dependency installation was not rerun against the live UI.
+and whitespace checks passed.
+
+## Fresh installation and UI
+
+The Hugging Face tutorial was tested from GitHub commit `5900f85` in a new checkout with
+a clean `.venv`, UV cache, Cargo dependencies and native build. The unchanged setup script
+completed in **46.54 s**. Only the 34 large weight transfers were replaced with verified local
+hardlinks; the real anonymous HF client checked metadata and downloaded the other 19 files.
+All runtime modules and the compiled motion-correction extension loaded from the new checkout.
+
+Chromium opened the UI on port 8876, keeping the existing server running. With an empty prompt
+cache, the Generate motion button produced a genuine 5-second animation in **9.77 s**:
+100 diffusion steps, 150 frames, 77 joints, 30 FPS. Playback, pause, scrubbing, 2× speed,
+loop end, skeleton visibility and the browser's NPZ download passed. All arrays were finite,
+rotation errors stayed below `1e-3`, and API positions matched the downloaded NPZ exactly.
+A second real generation with the cached prompt produced identical arrays. No browser or
+network errors occurred. Local receipts, NPZ files and screenshots are in `out/fresh-install-qa/`.
+These individual runs are functional checks; the benchmark charts retain their original data.
