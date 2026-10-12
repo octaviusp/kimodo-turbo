@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kimodo Gym</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.min.js", "three/addons/": "./vendor/addons/" } }
+  </script>
+</head>
+<body>
+  <aside class="panel">
+    <header class="brand">
+      <h1>Kimodo Gym</h1>
+      <span id="status" class="pill pill-wait">Cargando modelo…</span>
+    </header>
+
+    <section>
+      <h2>Personaje</h2>
+      <div class="model-card">
+        <div>
+          <div id="model-name" class="model-name">—</div>
+          <div id="model-rig" class="muted">—</div>
+        </div>
+      </div>
+      <div class="row">
+        <button id="load-default" class="secondary">Personaje realista</button>
+        <label class="button secondary">Elegir .glb…<input id="file" type="file" accept=".glb,model/gltf-binary" hidden></label>
+      </div>
+      <p class="hint">También podés arrastrar un .glb al visor. Sin esqueleto → se riggea automáticamente.</p>
+    </section>
+
+    <section>
+      <h2>Movimiento</h2>
+      <div class="chips" id="presets"></div>
+      <div id="segments"></div>
+      <button id="add-segment" class="link">+ Agregar segmento</button>
+      <div class="grid3">
+        <label>Semilla<input id="seed" type="number" value="0" min="0"></label>
+        <label>Pasos<input id="steps" type="number" value="100" min="10" max="200"></label>
+        <label class="check"><input id="postprocess" type="checkbox" checked> Pies limpios</label>
+      </div>
+      <button id="generate" class="primary" disabled>Generar animación</button>
+      <div id="gen-status" class="muted" aria-live="polite">Los prompts funcionan mejor en inglés.</div>
+    </section>
+
+    <section>
+      <h2>Reproducción</h2>
+      <div class="transport">
+        <button id="play" class="icon" disabled aria-label="Reproducir">▶</button>
+        <input id="scrub" type="range" min="0" max="1" step="0.001" value="0" disabled>
+        <span id="time" class="mono">0.0 / 0.0 s</span>
+      </div>
+      <div class="grid2">
+        <label>Velocidad
+          <select id="speed"><option>0.25</option><option>0.5</option><option selected>1</option><option>1.5</option><option>2</option></select>
+        </label>
+        <label class="check"><input id="loop" type="checkbox" checked> Repetir</label>
+        <label class="check"><input id="inplace" type="checkbox"> En el sitio</label>
+        <label class="check"><input id="follow" type="checkbox" checked> Cámara sigue</label>
+        <label class="check"><input id="skeleton" type="checkbox"> Esqueleto Kimodo</label>
+      </div>
+      <div id="metric" class="muted"></div>
+    </section>
+
+    <section>
+      <h2>Historial</h2>
+      <ol id="history" class="history"><li class="muted">Todavía no generaste nada.</li></ol>
+    </section>
+
+    <details>
+      <summary>Mapeo de huesos</summary>
+      <div id="mapping" class="mapping"></div>
+    </details>
+  </aside>
+
+  <main id="viewport">
+    <div id="drop" class="drop">Soltá el .glb para cargarlo</div>
+    <div id="busy" class="busy" hidden><div class="spinner"></div><span id="busy-text"></span></div>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

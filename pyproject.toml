@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kimodo-turbo"
+version = "0.1.0"
+description = "Kimodo motion generation on Apple Silicon with MLX in a few GB of RAM"
+requires-python = ">=3.12"
+dependencies = ["kimodo", "mlx>=0.32.3", "numpy", "safetensors", "tokenizers", "torch"]
+
+[project.scripts]
+kimodo-turbo = "kimodo_turbo.cli:main"
+
+[tool.setuptools]
+packages = ["kimodo_turbo"]
+
+[tool.ruff]
+line-length = 120

@@ -1,0 +1,25 @@
+diff --git a/kimodo/model/__init__.py b/kimodo/model/__init__.py
+index a1d4cd8..7f329ec 100644
+--- a/kimodo/model/__init__.py
++++ b/kimodo/model/__init__.py
+@@ -4,7 +4,6 @@
+ 
+ from .common import resolve_target
+ from .kimodo_model import Kimodo
+-from .llm2vec import LLM2VecEncoder
+ from .load_model import load_model
+ from .loading import (
+     AVAILABLE_MODELS,
+@@ -29,3 +28,12 @@ __all__ = [
+     "DEFAULT_TEXT_ENCODER_URL",
+     "MODEL_NAMES",
+ ]
++
++
++def __getattr__(name):
++    # LLM2Vec pulls in transformers + peft (~2 s); import it only when it is actually requested.
++    if name == "LLM2VecEncoder":
++        from .llm2vec import LLM2VecEncoder
++
++        return LLM2VecEncoder
++    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
