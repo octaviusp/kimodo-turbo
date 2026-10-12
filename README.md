@@ -1,5 +1,11 @@
 # Kimodo Turbo
 
+https://github.com/user-attachments/assets/de3eb96a-0d6b-4ab9-9ed0-d9b21fcd15cf
+
+Real-time demo at **1× speed, without cuts**: a 5-second motion generated in **6.9 s**,
+with the model already loaded. The large counter measures **~7.0 s from click to playback**.
+[Download the video](docs/assets/real-time-demo.mp4).
+
 Generate human motion on Apple Silicon with **8.2× faster generation** and **78% less peak
 process memory** than the original Kimodo running on CPU on the same Mac.
 
